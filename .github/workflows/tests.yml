@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  selenium-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: tests/requirements.txt
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install Python test dependencies
+        run: pip install -r tests/requirements.txt
+
+      - name: Start the app server
+        run: nohup node server.js > server.log 2>&1 &
+
+      - name: Wait for the server to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/index.html > /dev/null; then
+              echo "Server is up."
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server did not start in time." >&2
+          cat server.log
+          exit 1
+
+      - name: Run the automated test suite (Selenium + Pytest)
+        working-directory: .
+        env:
+          HEADLESS: "1"
+          BASE_URL: "http://localhost:3000"
+        run: pytest -v
+
+      - name: Show server log on failure
+        if: failure()
+        run: cat server.log || true
