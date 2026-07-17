@@ -1,5 +1,6 @@
 """Page object for index.html (login / sign up)."""
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -47,15 +48,29 @@ class LoginPage:
         self.driver.find_element(*self.SIGNUP_EMAIL).send_keys(email)
         self.driver.find_element(*self.SIGNUP_PASSWORD).send_keys(password)
         self.driver.find_element(*self.SIGNUP_SUBMIT).click()
-        self.wait.until(EC.url_contains("app.html"))
+        self._wait_for_outcome()
 
     def log_in(self, email, password):
         self.driver.find_element(*self.LOGIN_EMAIL).send_keys(email)
         self.driver.find_element(*self.LOGIN_PASSWORD).send_keys(password)
         self.driver.find_element(*self.LOGIN_SUBMIT).click()
+        self._wait_for_outcome()
+
+    def _wait_for_outcome(self):
+        """Wait for whichever happens first after a login/signup submit: a
+        redirect to app.html (success) or the error banner getting text
+        (failure). Using a single either/or wait — instead of only waiting
+        for the redirect — means negative-path tests resolve as soon as the
+        error appears instead of blocking for the full timeout, and it
+        removes the race condition where an assertion on error_text() could
+        run before the async fetch()/response has finished rendering it."""
+        self.wait.until(lambda d: "app.html" in d.current_url or self.error_text() != "")
 
     def wait_for_app(self):
         self.wait.until(EC.url_contains("app.html"))
 
     def error_text(self):
-        return self.driver.find_element(*self.ERROR_BOX).text
+        try:
+            return self.driver.find_element(*self.ERROR_BOX).text
+        except NoSuchElementException:
+            return ""
