@@ -2,7 +2,7 @@
 
 > 🚧 **Work in progress.** Actively evolving — expect frequent changes to scope, UI and data model. Not production-ready (see Security notes below).
 
-Functional prototype built to validate the business logic before any investment in a real product. Covers: client accounts (login/password), a post-login category picker (Hair — Women / Hair — Men, with Makeup and Skincare coming soon, all sharing one account and one cart), hair anamnesis, harmony assessment (visagism + personal color analysis), a full protocol menu with no budget gating, an optional budget-capped quote, a technical data sheet per product (usage, ingredients, consumption plan), a lightweight gamification layer (points, progress bar, achievement badges), appointment booking with a partner professional, and product orders (no real payment processing).
+Functional prototype built to validate the business logic before any investment in a real product. Covers: client accounts (login/password), a post-login category picker (Hair — Women / Hair — Men / Makeup / Skincare, all sharing one account and one cart), hair anamnesis, harmony assessment (visagism + personal color analysis), a full protocol menu with no budget gating, curated Makeup and Skincare catalogs grounded in researched 2026 K-beauty trends, an optional budget-capped quote, a technical data sheet per product (usage, ingredients, consumption plan, embedded video tutorial), a lightweight gamification layer (points, progress bar, achievement badges), appointment booking with a partner professional, and product orders (no real payment processing).
 
 Built with zero external dependencies — a single Node.js HTTP server, in-memory sessions, and a JSON file as the data store — so it runs anywhere Node is installed, with no install step and no network dependency.
 
@@ -34,8 +34,11 @@ Requirement: Node.js 18 or later (`node -v` to check).
 - Harmony assessment (visagism + personal color analysis), always presented with an alternative, never a single verdict
 - Full protocol menu — every phase and tier (Essential/Clinical) freely selectable, with no budget cap filtering the options
 - Single placeholder brand ("HANA LAB", fictional, Korean-beauty-inspired) applied consistently across the product catalog, to keep the demo coherent until a real supplier is chosen
+- Makeup catalog (5 curated items) and Skincare catalog (Top 5 Korean skincare essentials) — each grounded in real, researched 2026 K-beauty trend reporting (cited in commit messages), not invented; both are a curated starter kit rather than a full diagnostic quiz like Hair has
+- Custom hand-drawn SVG product illustrations (dropper bottle, jar, cushion compact, tube, ampoule, sheet-mask sachet, cream pot) in the HANA LAB gradient style, replacing the earlier camera-emoji placeholder — this environment couldn't reach stock-photo CDNs to fetch real photographs, so illustrations were the practical path to "more visual, not a placeholder icon"
+- Embedded video tutorials (real public YouTube videos, found via research — double cleansing, sheet masks, cushion foundation application, hair oiling/scalp massage, a 10-step glass-skin routine overview) on the relevant product cards
 - Lightweight gamification layer — points counter, progress bar toward a complete protocol, and unlockable achievement badges (cosmetic only, doesn't change pricing)
-- Per-product technical sheet: description, step-by-step usage, key ingredients, benefits, contraindications ("do not use if"), and a consumption plan (estimated yield until the next purchase)
+- Per-product technical sheet: description, step-by-step usage, key ingredients, benefits, contraindications ("do not use if"), a consumption plan (estimated yield until the next purchase), a "2026 trend" callout, and (where available) a video tutorial
 - Budget-capped quote — **optional**, only activates if the client asks for it, at the end of the flow
 - Client record — assessment history saved per account
 - Shopping cart persists across page reloads, tab navigation and re-login (`localStorage`), cleared only on logout
@@ -47,7 +50,7 @@ Requirement: Node.js 18 or later (`node -v` to check).
 
 A long list of additional features accumulated over the course of requests. To keep this prototype testable (and avoid a project that never ships), they're recorded here as next steps rather than built blindly:
 
-- Makeup and Skincare modules — the category picker already routes to them and shares the cart/account, but the diagnostic content itself ("em breve" stub for now) still needs to be designed before it's real
+- A real diagnostic quiz for Makeup and Skincare (today they're a curated product grid, not an anamnesis flow like Hair's)
 - Admin dashboard (sales KPIs, profit/loss, inventory, stock shortages/surplus, alerts for difficult clients/complaints)
 - Stock management with pricing, shortages and surplus
 - Pickup points
@@ -55,8 +58,7 @@ A long list of additional features accumulated over the course of requests. To k
 - Apple Pay / Google Pay / real payment checkout
 - Insurance (unclear which type — product, service, liability — needs clarification before designing)
 - Real AI engine (today the harmony/protocol responses are deterministic rules, not calls to a language model — see the DeepSeek/Qwen/Kimi/GLM/MiniMax discussion for that integration)
-- Top 10 most viral TikTok content/products (Korea/Brazil) — research gathered informally, not yet built into the app
-- Real product images/videos and a real supplier relationship (currently everything is under one fictional placeholder brand, "HANA LAB")
+- Real product photography and a real supplier relationship (currently illustrated, under one fictional placeholder brand, "HANA LAB" — see `tests/TEST_PLAN.md` and commit history for the trend research this content is grounded in)
 
 Each of these is a real chunk of work (most involve integrating an external service, or real money moving through the system) — worth treating as a separate request rather than another line of code in the same file.
 
