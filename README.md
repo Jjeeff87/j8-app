@@ -1,6 +1,8 @@
 # J8 — Hair Diagnostic & Protocol Web App (Prototype)
 
-Functional prototype built to validate the business logic before any investment in a real product. Covers: client accounts (login/password), hair anamnesis, harmony assessment (visagism + personal color analysis), a full protocol menu with no budget gating, an optional budget-capped quote, a technical data sheet per product (usage, ingredients, consumption plan), appointment booking with a partner professional, and product orders (no real payment processing).
+> 🚧 **Work in progress.** Actively evolving — expect frequent changes to scope, UI and data model. Not production-ready (see Security notes below).
+
+Functional prototype built to validate the business logic before any investment in a real product. Covers: client accounts (login/password), a post-login category picker (Hair — Women / Hair — Men, with Makeup and Skincare coming soon, all sharing one account and one cart), hair anamnesis, harmony assessment (visagism + personal color analysis), a full protocol menu with no budget gating, an optional budget-capped quote, a technical data sheet per product (usage, ingredients, consumption plan), a lightweight gamification layer (points, progress bar, achievement badges), appointment booking with a partner professional, and product orders (no real payment processing).
 
 Built with zero external dependencies — a single Node.js HTTP server, in-memory sessions, and a JSON file as the data store — so it runs anywhere Node is installed, with no install step and no network dependency.
 
@@ -27,19 +29,25 @@ Requirement: Node.js 18 or later (`node -v` to check).
 ## What's implemented and tested
 
 - Sign up / log in / log out (password hashed with `scrypt`, never stored in plain text)
-- Hair anamnesis using clinical language (main concern, gender, facial geometry, skin undertone, color direction)
+- Post-login category picker (Hair — Women, Hair — Men, Makeup, Skincare) — all four route to the same account and the same shopping cart; switch between them anytime from the pill bar without losing anything
+- Hair anamnesis using clinical language (main concern, gender, facial geometry, skin undertone, color direction) — gender is pre-filled from the chosen category but stays editable
 - Harmony assessment (visagism + personal color analysis), always presented with an alternative, never a single verdict
 - Full protocol menu — every phase and tier (Essential/Clinical) freely selectable, with no budget cap filtering the options
-- Per-product technical sheet: description, step-by-step usage, key ingredients, benefits, contraindications "do not use if", and a consumption plan (estimated yield until the next purchase)
+- Single placeholder brand ("HANA LAB", fictional, Korean-beauty-inspired) applied consistently across the product catalog, to keep the demo coherent until a real supplier is chosen
+- Lightweight gamification layer — points counter, progress bar toward a complete protocol, and unlockable achievement badges (cosmetic only, doesn't change pricing)
+- Per-product technical sheet: description, step-by-step usage, key ingredients, benefits, contraindications ("do not use if"), and a consumption plan (estimated yield until the next purchase)
 - Budget-capped quote — **optional**, only activates if the client asks for it, at the end of the flow
 - Client record — assessment history saved per account
+- Shopping cart persists across page reloads, tab navigation and re-login (`localStorage`), cleared only on logout
 - Booking calendar with 3 sample professionals, available slots, booking and cancellation
 - Product orders (resale) — logged as "pending", no real payment gateway
+- Automated Python/Selenium/Pytest test suite covering the flows above (see `tests/`)
 
 ## What was deliberately left out of this version
 
 A long list of additional features accumulated over the course of requests. To keep this prototype testable (and avoid a project that never ships), they're recorded here as next steps rather than built blindly:
 
+- Makeup and Skincare modules — the category picker already routes to them and shares the cart/account, but the diagnostic content itself ("em breve" stub for now) still needs to be designed before it's real
 - Admin dashboard (sales KPIs, profit/loss, inventory, stock shortages/surplus, alerts for difficult clients/complaints)
 - Stock management with pricing, shortages and surplus
 - Pickup points
@@ -47,8 +55,8 @@ A long list of additional features accumulated over the course of requests. To k
 - Apple Pay / Google Pay / real payment checkout
 - Insurance (unclear which type — product, service, liability — needs clarification before designing)
 - Real AI engine (today the harmony/protocol responses are deterministic rules, not calls to a language model — see the DeepSeek/Qwen/Kimi/GLM/MiniMax discussion for that integration)
-- Top 10 most viral TikTok content/products (Korea/Brazil) and a makeup module — market research still pending
-- Real product images and videos (currently clearly-labeled visual placeholders in the technical sheet)
+- Top 10 most viral TikTok content/products (Korea/Brazil) — research gathered informally, not yet built into the app
+- Real product images/videos and a real supplier relationship (currently everything is under one fictional placeholder brand, "HANA LAB")
 
 Each of these is a real chunk of work (most involve integrating an external service, or real money moving through the system) — worth treating as a separate request rather than another line of code in the same file.
 

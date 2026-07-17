@@ -104,7 +104,9 @@ function readBody(req) {
       try {
         resolve(JSON.parse(data));
       } catch (e) {
-        reject(new Error("JSON inválido no corpo da requisição."));
+        const err = new Error("JSON inválido no corpo da requisição.");
+        err.statusCode = 400; // corpo malformado é erro do cliente, não do servidor
+        reject(err);
       }
     });
     req.on("error", reject);
@@ -427,8 +429,9 @@ const server = http.createServer(async (req, res) => {
     try {
       await match.handler(req, res, match.params, parsed.searchParams);
     } catch (e) {
-      console.error(e);
-      sendJSON(res, 500, { error: e.message || "Erro interno do servidor." });
+      const status = e.statusCode || 500;
+      if (status >= 500) console.error(e);
+      sendJSON(res, status, { error: e.message || "Erro interno do servidor." });
     }
     return;
   }
