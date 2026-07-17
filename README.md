@@ -1,6 +1,14 @@
+![J8 — Hair & Beauty Diagnostic Platform](docs/screenshots/banner.png)
+
 # J8 — Hair Diagnostic & Protocol Web App (Prototype)
 
+[![Tests](https://github.com/Jjeeff87/j8-app/actions/workflows/tests.yml/badge.svg)](https://github.com/Jjeeff87/j8-app/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://j8-app.onrender.com)
+
 > 🚧 **Work in progress.** Actively evolving — expect frequent changes to scope, UI and data model. Not production-ready (see Security notes below).
+
+**[Try the live demo →](https://j8-app.onrender.com)**
 
 Functional prototype built to validate the business logic before any investment in a real product. Covers: client accounts (login/password), a post-login category picker (Hair — Women / Hair — Men / Makeup / Skincare, all sharing one account and one cart), hair anamnesis, harmony assessment (visagism + personal color analysis), a full protocol menu with no budget gating, curated Makeup and Skincare catalogs grounded in researched 2026 K-beauty trends, an optional budget-capped quote, a technical data sheet per product (usage, ingredients, consumption plan, embedded video tutorial), a lightweight gamification layer (points, progress bar, achievement badges), appointment booking with a partner professional, and product orders (no real payment processing).
 
@@ -17,6 +25,12 @@ node server.js
 Then open `http://localhost:3000` in your browser. Create an account (email + password, 6 characters minimum) and try the flow.
 
 Requirement: Node.js 18 or later (`node -v` to check).
+
+## Screenshots
+
+| Hair anamnesis & gamification bar | Makeup catalog (real, researched 2026 trends) |
+|---|---|
+| ![Hair assessment screen](docs/screenshots/hair-assessment.jpg) | ![Makeup catalog screen](docs/screenshots/makeup-catalog.jpg) |
 
 ## Deploying a public link (Render, free tier)
 
@@ -44,7 +58,7 @@ Requirement: Node.js 18 or later (`node -v` to check).
 - Shopping cart persists across page reloads, tab navigation and re-login (`localStorage`), cleared only on logout
 - Booking calendar with 3 sample professionals, available slots, booking and cancellation
 - Product orders (resale) — logged as "pending", no real payment gateway
-- Automated Python/Selenium/Pytest test suite covering the flows above (see `tests/`)
+- Automated Python/Selenium/Pytest test suite covering the flows above (see `tests/`, test case matrix in `tests/TEST_PLAN.md`), run automatically on every push via GitHub Actions (`.github/workflows/tests.yml`) — see the "Tests" badge at the top of this file for the current status
 
 ## What was deliberately left out of this version
 
@@ -69,3 +83,11 @@ Each of these is a real chunk of work (most involve integrating an external serv
 - No HTTPS (runs on `http://localhost`) — never expose this server directly to the internet without TLS
 - No login rate limiting — add this before any use beyond localhost
 - See `J8_PROFESSIONAL_EDITION.md` (Sections 3–5 and 13) and `J8_FICHA_CLIENTE_IA.md` for the full LGPD/GDPR and Anvisa/INFARMED requirements before handling real client data
+
+## CI/CD
+
+Every push to `main` (and every pull request) runs the full Selenium/Pytest suite against a freshly started instance of the server on GitHub-hosted runners — see `.github/workflows/tests.yml`. This runs the real suite with real internet access (installing Selenium, Pytest and Chrome from scratch each run), independent of any local environment quirks.
+
+## License
+
+[MIT](LICENSE) — see the `LICENSE` file for the full text.
