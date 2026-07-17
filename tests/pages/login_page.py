@@ -46,9 +46,24 @@ class LoginPage:
     def sign_up(self, nome, email, password):
         self.driver.find_element(*self.SIGNUP_NOME).send_keys(nome)
         self.driver.find_element(*self.SIGNUP_EMAIL).send_keys(email)
-        self.driver.find_element(*self.SIGNUP_PASSWORD).send_keys(password)
+        pw_el = self.driver.find_element(*self.SIGNUP_PASSWORD)
+        pw_el.send_keys(password)
         self.driver.find_element(*self.SIGNUP_SUBMIT).click()
+        if not self.driver.execute_script("return arguments[0].checkValidity();", pw_el):
+            # The password input has minlength="6" — the browser's own HTML5
+            # constraint validation blocks the submit client-side before any
+            # request reaches the server (e.g. a 3- or 5-character password).
+            # No app.js/server code ran at all, so there's nothing else to
+            # wait for: this IS the outcome.
+            return
         self._wait_for_outcome()
+
+    def signup_password_client_invalid(self):
+        """True if the signup password field currently fails the browser's
+        own HTML5 constraint validation (minlength=6) — i.e. the form was
+        blocked from ever submitting, before app.js or the server saw it."""
+        el = self.driver.find_element(*self.SIGNUP_PASSWORD)
+        return not self.driver.execute_script("return arguments[0].checkValidity();", el)
 
     def log_in(self, email, password):
         self.driver.find_element(*self.LOGIN_EMAIL).send_keys(email)
