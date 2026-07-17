@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J8 — Avaliação Capilar</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark">J8</div>
+      <div>
+        <h1>Avaliação Capilar &amp; Protocolo
+          <span>Protótipo de teste — não é o produto final</span>
+        </h1>
+      </div>
+    </div>
+    <div class="userbar">
+      <span id="userLabel">A carregar…</span>
+      <div class="currency-toggle" id="currencyToggle" style="display:flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px;gap:2px;">
+        <button data-cur="EUR" class="active" style="border:none;background:var(--violet);color:#fff;padding:6px 14px;border-radius:999px;font-size:13px;cursor:pointer;font-weight:600;">€ EUR</button>
+        <button data-cur="BRL" style="border:none;background:transparent;color:var(--ink-soft);padding:6px 14px;border-radius:999px;font-size:13px;cursor:pointer;font-weight:600;">R$ BRL</button>
+      </div>
+      <button id="logoutBtn">Sair</button>
+    </div>
+  </header>
+
+  <div class="disclaimer">
+    <strong>Protótipo funcional para teste da lógica clínico-comercial.</strong>
+    A avaliação de harmonia segue critérios de visagismo e colorimetria pessoal; não substitui
+    consulta com profissional habilitado. Nenhuma imagem é processada — apenas as respostas
+    fornecidas abaixo (conforme <code>J8_MASTER_PLAN.md</code>: MVP primeiro, sem visão computacional).
+  </div>
+
+  <div class="tabs" id="mainTabs">
+    <div class="tab active" data-tab="avaliacao">Nova avaliação</div>
+    <div class="tab" data-tab="ficha">Minha ficha (histórico)</div>
+    <div class="tab" data-tab="agenda">Agenda &amp; Pedidos</div>
+  </div>
+
+  <div id="painelAvaliacao">
+
+    <form id="quizForm">
+      <div class="card">
+        <h2>1. Anamnese capilar</h2>
+        <p class="sub">As mesmas informações que abririam o registo clínico da cliente no fluxo real.</p>
+
+        <div class="field">
+          <label>Qual é a principal queixa a ser tratada?</label>
+          <div class="options" data-group="objetivo">
+            <div class="opt" data-value="frizz">Frizz e ausência de definição da fibra</div>
+            <div class="opt" data-value="quebra">Dano estrutural e quebra (histórico químico/térmico)</div>
+            <div class="opt" data-value="couro">Alteração do couro cabeludo (oleosidade, queda, sensibilidade)</div>
+            <div class="opt" data-value="cor">Alteração de coloração</div>
+            <div class="opt" data-value="corte">Redesenho de corte</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Para calibrar a biblioteca de harmonização facial:</label>
+          <div class="options" data-group="genero">
+            <div class="opt" data-value="feminino">Feminino</div>
+            <div class="opt" data-value="masculino">Masculino</div>
+            <div class="opt" data-value="prefiro_nao_dizer">Prefiro não indicar</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Geometria facial predominante</label>
+          <select id="formatoRosto">
+            <option value="oval">Oval — proporção equilibrada entre testa, zigomático e mandíbula</option>
+            <option value="redondo">Redondo — largura e altura semelhantes</option>
+            <option value="quadrado">Quadrado — zigomático e mandíbula alinhados, ângulos marcados</option>
+            <option value="triangular">Triangular — mandíbula mais larga que a testa</option>
+            <option value="coracao">Coração — testa larga, queixo afilado</option>
+            <option value="retangular">Retangular — alongado, ângulos definidos</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Avaliação de subtom de pele (colorimetria pessoal)</label>
+          <div class="options" data-group="subtom">
+            <div class="opt" data-value="quente">Subtom quente (veias do pulso, sob luz natural, parecem esverdeadas)</div>
+            <div class="opt" data-value="frio">Subtom frio (veias parecem azuladas)</div>
+            <div class="opt" data-value="neutro">Neutro / indeterminado</div>
+          </div>
+        </div>
+
+        <div class="field" id="corDesejadaField">
+          <label>Direção de coloração em avaliação (opcional)</label>
+          <select id="corDesejada">
+            <option value="">— nenhuma direção definida —</option>
+            <option value="loiro_esverdeado">Loiro esverdeado (lemon platinum)</option>
+            <option value="cream_soda">Cream soda</option>
+            <option value="luzes_cidra">Luzes de cidra (bronze/caramelo)</option>
+            <option value="loiro_champanhe">Loiro champanhe</option>
+            <option value="mocha_mousse">Mocha mousse</option>
+            <option value="vermelho_cobre">Vermelho cobre</option>
+            <option value="preto_intenso">Preto intenso</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="cta">Gerar avaliação clínico-comercial</button>
+    </form>
+
+    <div id="resultado" style="display:none;">
+
+      <div class="card">
+        <h2>Avaliação de harmonia — visagismo &amp; colorimetria</h2>
+        <p class="sub">Critério técnico, não opinião estética isolada — sempre com alternativa, nunca só veredito.</p>
+        <div id="harmoniaCorte"></div>
+        <div id="harmoniaCor"></div>
+      </div>
+
+      <div class="card">
+        <h2>Protocolo — todas as possibilidades disponíveis</h2>
+        <p class="sub">Nada aqui é pré-filtrado por orçamento. Marque o que deseja incluir; o total é calculado em tempo real. As fases mais relevantes para a sua queixa principal já vêm pré-selecionadas.</p>
+        <div id="menuProtocolo"></div>
+        <div class="banner ok" id="carrinhoTotalBox" style="margin-top:16px;"></div>
+        <a href="#" target="_blank" rel="noopener" class="cta whatsapp-cta" id="enviarCarrinhoWhatsappBtn" style="display:none;">📲 Enviar este pedido por WhatsApp (−10% de boas-vindas)</a>
+        <button type="button" class="cta secondary" id="salvarFichaBtn">Guardar esta avaliação na minha ficha</button>
+        <div id="salvarFichaMsg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Orçamento fechado dentro de um limite <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(opcional — só se a cliente pedir)</span></h2>
+        <p class="sub">Isto não substitui a lista acima — é uma segunda etapa, só quando a cliente quer saber "o que dá para fazer com X".</p>
+        <button type="button" class="cta secondary" id="ativarOrcamentoBtn">Montar orçamento com limite de gasto</button>
+
+        <div id="blocoOrcamento" style="display:none;margin-top:16px;">
+          <div class="field">
+            <label>Limite de gasto informado pela cliente</label>
+            <div class="budget-row">
+              <input type="range" id="budgetSlider" min="80" max="700" step="10" value="300">
+              <div class="budget-val" id="budgetVal">€300</div>
+            </div>
+          </div>
+          <button type="button" class="cta" id="gerarOrcamentoBtn">Gerar orçamento com este limite</button>
+
+          <div id="orcamentoResultado" style="display:none;margin-top:18px;">
+            <table class="orcamento" id="tabelaOrcamento">
+              <thead><tr><th>Item</th><th>Categoria</th><th style="text-align:right">Preço</th></tr></thead>
+              <tbody id="orcamentoBody"></tbody>
+            </table>
+            <div id="saldoBanner"></div>
+            <h3 style="font-size:14px;margin-top:18px;">Prévia de mensagem WhatsApp</h3>
+            <div class="whatsapp-preview" id="whatsappPreview"></div>
+            <a href="#" target="_blank" rel="noopener" class="cta whatsapp-cta" id="whatsappLinkBtn" style="margin-top:12px;">📲 Enviar este orçamento por WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="painelFicha" style="display:none;">
+    <div class="card">
+      <h2>Minha ficha — histórico de avaliações</h2>
+      <p class="sub">Avaliações salvas nesta conta (armazenadas localmente no servidor de teste).</p>
+      <div id="fichaLista"></div>
+    </div>
+  </div>
+
+  <div id="painelAgenda" style="display:none;">
+    <div class="card">
+      <h2>Marcação com profissional parceiro</h2>
+      <p class="sub">Agenda de exemplo — dados fictícios só para testar o fluxo de marcação.</p>
+      <div id="listaProfissionais"></div>
+      <div id="slotsBox" style="display:none;">
+        <h3 style="font-size:14px;margin-top:18px;">Horários disponíveis (próximos dias úteis)</h3>
+        <div class="field">
+          <label>Serviço a marcar</label>
+          <select id="servicoMarcacao">
+            <option value="Corte visagista">Corte visagista</option>
+            <option value="Coloração de manutenção">Coloração de manutenção</option>
+            <option value="Consulta de diagnóstico">Consulta de diagnóstico</option>
+          </select>
+        </div>
+        <div class="slot-grid" id="slotGrid"></div>
+      </div>
+      <div id="marcarMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>As minhas marcações</h2>
+      <div id="minhasMarcacoes"></div>
+    </div>
+
+    <div class="card">
+      <h2>Pedidos de produtos (revenda)</h2>
+      <p class="sub">Protótipo sem gateway de pagamento — regista o pedido como "pendente" para simular o fluxo.</p>
+      <button type="button" class="cta secondary" id="finalizarPedidoBtn">Finalizar pedido com os itens de produto selecionados na última avaliação</button>
+      <div id="pedidoMsg"></div>
+      <h3 style="font-size:14px;margin-top:18px;">Histórico de pedidos</h3>
+      <div id="listaPedidos"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Protótipo J8 · a sua sessão expira em 8 horas de inatividade</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
