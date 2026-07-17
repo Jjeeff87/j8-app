@@ -40,28 +40,34 @@ def test_login_with_wrong_password_shows_error(driver, base_url, signed_up_user)
 
 
 def test_signup_rejects_short_password(driver, base_url, unique_credentials):
-    """Negative case: password below the 6-character minimum (server.js checks
-    `password.length < 6`) must be rejected, not silently truncated or accepted."""
+    """Negative case: password below the 6-character minimum must be
+    rejected, not silently truncated or accepted. This is enforced twice —
+    the signup form's `minlength="6"` blocks the browser from submitting at
+    all (so the server never even sees the request), and server.js's own
+    `password.length < 6` check is the fallback if that client-side check is
+    ever bypassed. The assertion accepts either layer catching it."""
     login_page = LoginPage(driver, base_url).open()
     login_page.go_to_signup_tab()
     login_page.sign_up(unique_credentials["nome"], unique_credentials["email"], "123")
 
-    # Should stay on index.html and show a validation error, not silently fail.
+    # Should stay on index.html and be rejected by one of the two layers,
+    # not silently fail.
     assert "app.html" not in driver.current_url
-    assert login_page.error_text() != ""
+    assert login_page.signup_password_client_invalid() or login_page.error_text() != ""
 
 
 @pytest.mark.regression
 def test_signup_rejects_five_char_password_boundary(driver, base_url, unique_credentials):
     """Boundary case (negative side): exactly one character under the minimum
-    (5 chars) must still be rejected — guards against an off-by-one in the
-    `< 6` check ever becoming `<= 6` or similar."""
+    (5 chars) must still be rejected — guards against an off-by-one in either
+    the client's `minlength="6"` or the server's `< 6` check ever becoming
+    `<= 6` or similar."""
     login_page = LoginPage(driver, base_url).open()
     login_page.go_to_signup_tab()
     login_page.sign_up(unique_credentials["nome"], unique_credentials["email"], "abcde")
 
     assert "app.html" not in driver.current_url
-    assert login_page.error_text() != ""
+    assert login_page.signup_password_client_invalid() or login_page.error_text() != ""
 
 
 @pytest.mark.regression
