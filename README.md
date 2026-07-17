@@ -1,59 +1,61 @@
-# J8 — Protótipo de aplicação web
+# J8 — Hair Diagnostic & Protocol Web App (Prototype)
 
-Protótipo funcional para testar a lógica do negócio antes de qualquer investimento em produto real. Cobre: conta de cliente (login/senha), anamnese capilar, avaliação de harmonia (visagismo + colorimetria), menu completo de possibilidades do protocolo (sem gate de orçamento), orçamento fechado opcional por limite de gasto, ficha técnica de cada produto (modo de uso, ingredientes, plano de consumo), marcação de horário com profissional parceiro, e pedidos de produto (sem pagamento real).
+Functional prototype built to validate the business logic before any investment in a real product. Covers: client accounts (login/password), hair anamnesis, harmony assessment (visagism + personal color analysis), a full protocol menu with no budget gating, an optional budget-capped quote, a technical data sheet per product (usage, ingredients, consumption plan), appointment booking with a partner professional, and product orders (no real payment processing).
 
-## Como correr
+Built with zero external dependencies — a single Node.js HTTP server, in-memory sessions, and a JSON file as the data store — so it runs anywhere Node is installed, with no install step and no network dependency.
 
-Não precisa de `npm install` — usa só bibliotecas nativas do Node.js (sem dependências externas, de propósito, para evitar qualquer bloqueio de rede ao testar).
+## Running it
+
+No `npm install` needed — it only uses Node.js built-in libraries (no external dependencies, by design, to avoid any network requirement while testing).
 
 ```bash
 node server.js
 ```
 
-Depois abrir `http://localhost:3000` no navegador. Cria uma conta (e-mail + senha, mínimo 6 caracteres) e testa o fluxo.
+Then open `http://localhost:3000` in your browser. Create an account (email + password, 6 characters minimum) and try the flow.
 
-Requisito: Node.js 18 ou superior (`node -v` para confirmar).
+Requirement: Node.js 18 or later (`node -v` to check).
 
-## Publicar com link público (Render, grátis)
+## Deploying a public link (Render, free tier)
 
-1. Criar um repositório novo no GitHub (ex: `j8-app`) e enviar todo este conteúdo para lá (arrastar os ficheiros na página "Add file → Upload files" do GitHub funciona, não precisa de linha de comandos).
-2. Ir a `https://render.com/deploy?repo=<URL do seu repositório GitHub>` — o Render lê o `render.yaml` já incluído aqui e propõe a configuração sozinho (serviço Node grátis, comando de start já preenchido).
-3. Confirmar e aguardar ~2–3 minutos. Fica com um link tipo `https://j8-app-xxxx.onrender.com`.
+1. Create a new GitHub repository (e.g. `j8-app`) and push this content to it (dragging files into GitHub's "Add file → Upload files" page works too — no command line required).
+2. Go to `https://render.com/deploy?repo=<your GitHub repo URL>` — Render reads the `render.yaml` already included here and proposes the configuration automatically (free Node web service, start command pre-filled).
+3. Confirm and wait ~2–3 minutes. You'll get a link like `https://j8-app-xxxx.onrender.com`.
 
-**Importante sobre o plano grátis do Render:** o armazenamento não é permanente — `data/db.json` (contas e fichas guardadas) pode ser apagado sempre que o serviço reinicia ou é atualizado. Bom para deixar amigas testarem o fluxo por uns dias; não é ainda base para guardar dados reais de clientes a longo prazo (para isso, mais à frente, vale a pena um disco persistente ou uma base de dados a sério).
+**Important about Render's free tier:** storage isn't persistent — `data/db.json` (accounts and saved records) can be wiped whenever the service restarts or redeploys. Fine for letting friends test the flow for a few days; not yet a foundation for storing real client data long-term (a persistent disk or a proper database would be the next step for that).
 
-## O que já está implementado e testado
+## What's implemented and tested
 
-- Criar conta / entrar / sair (senha protegida com hash `scrypt`, nunca guardada em texto simples)
-- Anamnese capilar com linguagem clínica (queixa principal, género, geometria facial, subtom de pele, direção de cor)
-- Avaliação de harmonia (visagismo + colorimetria pessoal), sempre com alternativa, nunca só um veredito
-- Menu completo do protocolo — todas as fases e níveis (Essential/Clinical) selecionáveis livremente, sem limite de orçamento a filtrar as opções
-- Ficha técnica por produto: descrição, modo de uso passo a passo, principais ingredientes, benefícios, contraindicações ("não usar se"), e plano de consumo (rendimento estimado até a próxima compra)
-- Orçamento fechado por limite de gasto — **opcional**, só ativa se a cliente pedir, no fim do fluxo
-- Ficha da cliente — histórico de avaliações guardado por conta
-- Agenda com 3 profissionais fictícios, horários disponíveis, marcação e cancelamento
-- Pedidos de produto (revenda) — regista como "pendente", sem gateway de pagamento real
+- Sign up / log in / log out (password hashed with `scrypt`, never stored in plain text)
+- Hair anamnesis using clinical language (main concern, gender, facial geometry, skin undertone, color direction)
+- Harmony assessment (visagism + personal color analysis), always presented with an alternative, never a single verdict
+- Full protocol menu — every phase and tier (Essential/Clinical) freely selectable, with no budget cap filtering the options
+- Per-product technical sheet: description, step-by-step usage, key ingredients, benefits, contraindications "do not use if", and a consumption plan (estimated yield until the next purchase)
+- Budget-capped quote — **optional**, only activates if the client asks for it, at the end of the flow
+- Client record — assessment history saved per account
+- Booking calendar with 3 sample professionals, available slots, booking and cancellation
+- Product orders (resale) — logged as "pending", no real payment gateway
 
-## O que ficou de fora desta versão (de propósito)
+## What was deliberately left out of this version
 
-Ao longo dos pedidos foi sendo acumulada uma lista grande de funcionalidades adicionais. Para este protótipo continuar testável (e não virar um projeto que nunca fecha), ficaram registadas aqui como próximos passos, não construídas às cegas:
+A long list of additional features accumulated over the course of requests. To keep this prototype testable (and avoid a project that never ships), they're recorded here as next steps rather than built blindly:
 
-- Painel administrativo (KPIs de vendas, lucro/perdas, inventário, sobras/faltas, alertas de clientes difíceis/reclamações)
-- Gestão de stocks com preços, faltas e sobras
-- Pontos de recolha (pickup points)
-- Planos de pagamento parcelado
-- Apple Pay / Google Pay / checkout com pagamento real
-- Seguro (não está claro que tipo — de produto, de serviço, de responsabilidade civil — precisa de clarificação antes de desenhar)
-- Motor de IA real (hoje as respostas de harmonia/protocolo são regras determinísticas, não chamadas a nenhum modelo de linguagem — ver a conversa sobre DeepSeek/Qwen/Kimi/GLM/MiniMax para essa integração)
-- Top 10 conteúdos/produtos mais virais no TikTok (Coreia/Brasil) e módulo de maquiagem — pesquisa de mercado ainda por fazer
-- Imagens e vídeos reais de produto (hoje há placeholders visuais claramente identificados como tal na ficha técnica)
+- Admin dashboard (sales KPIs, profit/loss, inventory, stock shortages/surplus, alerts for difficult clients/complaints)
+- Stock management with pricing, shortages and surplus
+- Pickup points
+- Installment payment plans
+- Apple Pay / Google Pay / real payment checkout
+- Insurance (unclear which type — product, service, liability — needs clarification before designing)
+- Real AI engine (today the harmony/protocol responses are deterministic rules, not calls to a language model — see the DeepSeek/Qwen/Kimi/GLM/MiniMax discussion for that integration)
+- Top 10 most viral TikTok content/products (Korea/Brazil) and a makeup module — market research still pending
+- Real product images and videos (currently clearly-labeled visual placeholders in the technical sheet)
 
-Cada um destes é uma peça de trabalho real (a maioria envolve integração com serviço externo, ou dinheiro real a passar pelo sistema) — vale tratar como um pedido à parte, não como mais uma linha de código no mesmo ficheiro.
+Each of these is a real chunk of work (most involve integrating an external service, or real money moving through the system) — worth treating as a separate request rather than another line of code in the same file.
 
-## Notas de segurança (protótipo, não produção)
+## Security notes (prototype, not production)
 
-- Sessões ficam em memória do servidor — reiniciar o processo desliga todas as sessões ativas (aceitável para teste, não para produção)
-- Base de dados é um ficheiro JSON local (`data/db.json`) — sem encriptação em repouso, sem backup automático
-- Sem HTTPS (roda em `http://localhost`) — nunca expor este servidor diretamente à internet sem TLS
-- Sem limitação de tentativas de login (rate limiting) — adicionar antes de qualquer uso além do localhost
-- Ver `J8_PROFESSIONAL_EDITION.md` (Secções 3–5 e 13) e `J8_FICHA_CLIENTE_IA.md` para os requisitos completos de LGPD/RGPD e Anvisa/INFARMED antes de tratar dados de clientes reais
+- Sessions live in server memory — restarting the process ends all active sessions (fine for testing, not for production)
+- The database is a local JSON file (`data/db.json`) — no encryption at rest, no automatic backup
+- No HTTPS (runs on `http://localhost`) — never expose this server directly to the internet without TLS
+- No login rate limiting — add this before any use beyond localhost
+- See `J8_PROFESSIONAL_EDITION.md` (Sections 3–5 and 13) and `J8_FICHA_CLIENTE_IA.md` for the full LGPD/GDPR and Anvisa/INFARMED requirements before handling real client data
