@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J8 — Entrar</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap narrow">
+
+  <header class="top" style="justify-content:center;">
+    <div class="brand">
+      <div class="brand-mark">J8</div>
+      <div>
+        <h1>Área da cliente
+          <span>Protótipo de teste — login local</span>
+        </h1>
+      </div>
+    </div>
+  </header>
+
+  <div class="disclaimer">
+    Protótipo local: as contas ficam guardadas apenas neste servidor de teste
+    (<code>data/db.json</code>), com senha protegida por hash. Não é um ambiente de produção —
+    ver notas de segurança no <code>README.md</code> antes de usar com dados reais.
+  </div>
+
+  <div class="card">
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-tab="login">Entrar</div>
+      <div class="tab" data-tab="signup">Criar conta</div>
+    </div>
+
+    <div id="erroBox"></div>
+
+    <form id="loginForm">
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="loginEmail" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="cta">Entrar</button>
+    </form>
+
+    <form id="signupForm" style="display:none;">
+      <div class="field">
+        <label>Nome</label>
+        <input type="text" id="signupNome" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="signupEmail" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Senha (mínimo 6 caracteres)</label>
+        <input type="password" id="signupPassword" required minlength="6" autocomplete="new-password">
+      </div>
+      <button type="submit" class="cta">Criar conta e entrar</button>
+    </form>
+  </div>
+
+  <footer>Protótipo J8 · dados ficam só no seu servidor local</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var tabs = document.querySelectorAll(".tab");
+  var loginForm = document.getElementById("loginForm");
+  var signupForm = document.getElementById("signupForm");
+
+  tabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      tabs.forEach(function(t){ t.classList.remove("active"); });
+      tab.classList.add("active");
+      var which = tab.getAttribute("data-tab");
+      loginForm.style.display = which === "login" ? "block" : "none";
+      signupForm.style.display = which === "signup" ? "block" : "none";
+      document.getElementById("erroBox").innerHTML = "";
+    });
+  });
+
+  function mostrarErro(msg){
+    document.getElementById("erroBox").innerHTML =
+      '<div class="banner erro">' + msg + '</div>';
+  }
+
+  loginForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: document.getElementById("loginEmail").value,
+        password: document.getElementById("loginPassword").value
+      })
+    }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+      .then(function(res){
+        if (!res.ok) { mostrarErro(res.d.error || "Erro ao entrar."); return; }
+        window.location.href = "app.html";
+      })
+      .catch(function(){ mostrarErro("Não foi possível conectar ao servidor."); });
+  });
+
+  signupForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: document.getElementById("signupNome").value,
+        email: document.getElementById("signupEmail").value,
+        password: document.getElementById("signupPassword").value
+      })
+    }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+      .then(function(res){
+        if (!res.ok) { mostrarErro(res.d.error || "Erro ao criar conta."); return; }
+        window.location.href = "app.html";
+      })
+      .catch(function(){ mostrarErro("Não foi possível conectar ao servidor."); });
+  });
+})();
+</script>
+</body>
+</html>
