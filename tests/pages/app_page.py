@@ -15,8 +15,15 @@ class AppPage:
     CATEGORY_PILL = (By.CSS_SELECTOR, "#categoriaBar .category-pill[data-cat='{key}']")
 
     APP_MAIN = (By.ID, "appMain")
-    EM_BREVE_PANEL = (By.ID, "painelEmBreve")
-    VOLTAR_CABELO_BTN = (By.ID, "voltarCabeloBtn")
+    PAINEL_AVALIACAO = (By.ID, "painelAvaliacao")
+    PAINEL_MAQUILHAGEM = (By.ID, "painelMaquilhagem")
+    PAINEL_SKINCARE = (By.ID, "painelSkincare")
+    MAIN_TABS = (By.ID, "mainTabs")
+    MAQUILHAGEM_GRID = (By.ID, "maquilhagemGrid")
+    SKINCARE_GRID = (By.ID, "skincareGrid")
+    ITEM_CHECKBOX = (By.CSS_SELECTOR, "#{container} .item-check")
+    FT_TOGGLE = (By.CSS_SELECTOR, "#{container} .ft-toggle")
+    VIDEO_IFRAME = (By.CSS_SELECTOR, "#{container} .video-embed iframe")
 
     GAMIFY_BAR = (By.ID, "gamifyBar")
     BADGE_CHIPS = (By.CSS_SELECTOR, ".badge-chip")
@@ -33,6 +40,8 @@ class AppPage:
     PRODUCT_CARD = (By.CSS_SELECTOR, ".product-card")
     BRAND_PILL = (By.CSS_SELECTOR, ".brand-pill")
     CART_TOTAL_BOX = (By.ID, "carrinhoTotalBox")
+    CART_TOTAL_BOX_MAQUILHAGEM = (By.ID, "carrinhoTotalBoxMaquilhagem")
+    CART_TOTAL_BOX_SKINCARE = (By.ID, "carrinhoTotalBoxSkincare")
 
     def __init__(self, driver, base_url):
         self.driver = driver
@@ -53,11 +62,47 @@ class AppPage:
         locator = (By.CSS_SELECTOR, self.CATEGORY_PILL[1].format(key=key))
         self.wait.until(EC.element_to_be_clickable(locator)).click()
 
-    def go_back_to_hair(self):
-        self.driver.find_element(*self.VOLTAR_CABELO_BTN).click()
+    def go_back_to_hair(self, key="cabelo_fem"):
+        """Categories switch via the pill bar now (the old dedicated 'voltar'
+        button was removed once Makeup/Skincare became real catalogs)."""
+        self.switch_category(key)
+        self.wait.until(EC.visibility_of_element_located(self.PAINEL_AVALIACAO))
 
-    def em_breve_visible(self):
-        return self.driver.find_element(*self.EM_BREVE_PANEL).is_displayed()
+    def maquilhagem_visible(self):
+        self.wait.until(EC.visibility_of_element_located(self.PAINEL_MAQUILHAGEM))
+        return self.driver.find_element(*self.PAINEL_MAQUILHAGEM).is_displayed()
+
+    def skincare_visible(self):
+        self.wait.until(EC.visibility_of_element_located(self.PAINEL_SKINCARE))
+        return self.driver.find_element(*self.PAINEL_SKINCARE).is_displayed()
+
+    def main_tabs_hidden(self):
+        el = self.driver.find_element(*self.MAIN_TABS)
+        return el.value_of_css_property("display") == "none"
+
+    def product_cards_in(self, container_id):
+        locator = (By.CSS_SELECTOR, "#{0} .product-card".format(container_id))
+        self.wait.until(EC.visibility_of_element_located(locator))
+        return self.driver.find_elements(*locator)
+
+    def check_first_item(self, container_id):
+        locator = (By.CSS_SELECTOR, self.ITEM_CHECKBOX[1].format(container=container_id))
+        self.driver.find_elements(*locator)[0].click()
+
+    def expand_first_ficha(self, container_id):
+        locator = (By.CSS_SELECTOR, self.FT_TOGGLE[1].format(container=container_id))
+        self.driver.find_elements(*locator)[0].click()
+
+    def video_iframe_src(self, container_id):
+        locator = (By.CSS_SELECTOR, self.VIDEO_IFRAME[1].format(container=container_id))
+        self.wait.until(EC.presence_of_element_located(locator))
+        return self.driver.find_element(*locator).get_attribute("src")
+
+    def cart_total_maquilhagem_text(self):
+        return self.driver.find_element(*self.CART_TOTAL_BOX_MAQUILHAGEM).text
+
+    def cart_total_skincare_text(self):
+        return self.driver.find_element(*self.CART_TOTAL_BOX_SKINCARE).text
 
     # ---------- quiz ----------
 
