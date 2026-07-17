@@ -1,7 +1,7 @@
 {
   "name": "j8-app",
   "version": "0.2.0",
-  "description": "Protótipo J8 — app web com login, ficha da cliente, protocolo, orçamento, agenda e pedidos. Zero dependências externas — corre só com Node.js.",
+  "description": "J8 prototype — web app with login, client records, protocol builder, quotes, booking, and orders. Zero external dependencies — runs on Node.js alone.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
