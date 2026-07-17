@@ -23,6 +23,9 @@
 
   document.getElementById("logoutBtn").addEventListener("click", function () {
     fetch("/api/logout", { method: "POST" }).then(function () {
+      // Limpa o carrinho guardado localmente — evita que a próxima pessoa a
+      // usar este navegador/computador veja o carrinho de outra cliente.
+      try { window.localStorage.removeItem("j8_carrinho_v1"); } catch (e) {}
       window.location.href = "index.html";
     });
   });
@@ -294,7 +297,37 @@
   // ============================================================
   // carrinho.fases[faseKey] = { incluido: bool, tier: 'essential'|'clinical' }
   // carrinho.servicos[servicoKey] = bool
-  var carrinho = { fases: {}, servicos: {} };
+  //
+  // Persistência: guardado no localStorage do navegador, para o carrinho
+  // sobreviver a recarregar a página, trocar de separador (Nova avaliação /
+  // Minha ficha / Agenda) ou fechar e reabrir o browser — só é limpo se a
+  // cliente sair (logout) ou limpar os dados do navegador.
+  var CARRINHO_STORAGE_KEY = "j8_carrinho_v1";
+
+  function carregarCarrinhoSalvo() {
+    try {
+      var raw = window.localStorage.getItem(CARRINHO_STORAGE_KEY);
+      if (!raw) return { fases: {}, servicos: {} };
+      var dados = JSON.parse(raw);
+      return {
+        fases: (dados && dados.fases) || {},
+        servicos: (dados && dados.servicos) || {}
+      };
+    } catch (e) {
+      return { fases: {}, servicos: {} };
+    }
+  }
+
+  function salvarCarrinho() {
+    try {
+      window.localStorage.setItem(CARRINHO_STORAGE_KEY, JSON.stringify(carrinho));
+    } catch (e) {
+      // Se o localStorage não estiver disponível (ex: modo privado em alguns
+      // navegadores), a app continua a funcionar, só sem persistência.
+    }
+  }
+
+  var carrinho = carregarCarrinhoSalvo();
 
   function renderMenuProtocolo() {
     var objetivo = selecoes.objetivo || "frizz";
@@ -436,6 +469,7 @@
   }
 
   function atualizarTotalCarrinho() {
+    salvarCarrinho();
     document.getElementById("carrinhoTotalBox").innerHTML =
       "<strong>Total das possibilidades selecionadas: " + fmt(totalCarrinho()) +
       "</strong> — sem limite de orçamento aplicado. Ajuste livremente o que faz sentido oferecer.";
