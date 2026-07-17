@@ -36,10 +36,29 @@
     fornecidas abaixo (conforme <code>J8_MASTER_PLAN.md</code>: MVP primeiro, sem visão computacional).
   </div>
 
+  <div id="painelCategoria" class="card category-select" style="display:none;">
+    <h2>Escolhe o teu universo J8 ✨</h2>
+    <p class="sub">Todas as opções usam a mesma conta e o mesmo carrinho — podes trocar quando quiseres, sem perder nada.</p>
+    <div class="category-grid" id="categoriaGrid"></div>
+  </div>
+
+  <div id="appMain" style="display:none;">
+
+  <div class="category-bar" id="categoriaBar"></div>
+
+  <div class="gamify-bar" id="gamifyBar"></div>
+
   <div class="tabs" id="mainTabs">
     <div class="tab active" data-tab="avaliacao">Nova avaliação</div>
     <div class="tab" data-tab="ficha">Minha ficha (histórico)</div>
     <div class="tab" data-tab="agenda">Agenda &amp; Pedidos</div>
+  </div>
+
+  <div id="painelEmBreve" class="card em-breve-card" style="display:none;">
+    <span class="eb-emoji">🚧</span>
+    <h2>Este módulo está a chegar em breve</h2>
+    <p class="sub">A tua conta e o teu carrinho já estão prontos para quando este universo abrir — entretanto explora o módulo de Cabelo.</p>
+    <button type="button" class="cta" id="voltarCabeloBtn" style="width:auto;padding:10px 20px;">💇 Ir para Cabelo</button>
   </div>
 
   <div id="painelAvaliacao">
@@ -199,6 +218,8 @@
       <h3 style="font-size:14px;margin-top:18px;">Histórico de pedidos</h3>
       <div id="listaPedidos"></div>
     </div>
+  </div>
+
   </div>
 
 </div>

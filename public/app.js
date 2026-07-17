@@ -16,6 +16,7 @@
       document.getElementById("userLabel").textContent =
         "Olá, " + (data.nome || data.email);
       renderFichaLista(data.fichas || []);
+      inicializarCategoria();
     })
     .catch(function () {
       window.location.href = "index.html";
@@ -23,12 +24,149 @@
 
   document.getElementById("logoutBtn").addEventListener("click", function () {
     fetch("/api/logout", { method: "POST" }).then(function () {
-      // Limpa o carrinho guardado localmente — evita que a próxima pessoa a
-      // usar este navegador/computador veja o carrinho de outra cliente.
-      try { window.localStorage.removeItem("j8_carrinho_v1"); } catch (e) {}
+      // Limpa o carrinho e a categoria guardados localmente — evita que a
+      // próxima pessoa a usar este navegador/computador veja dados de outra cliente.
+      try {
+        window.localStorage.removeItem("j8_carrinho_v1");
+        window.localStorage.removeItem(CATEGORIA_STORAGE_KEY);
+      } catch (e) {}
       window.location.href = "index.html";
     });
   });
+
+  // ============================================================
+  // 0.5 Categorias — universo escolhido depois do login
+  // ============================================================
+  // Todas as categorias partilham a MESMA conta e o MESMO carrinho — a
+  // categoria é só um filtro de apresentação/entrada, não uma conta separada.
+  // "Maquilhagem" e "Skincare" ainda não têm conteúdo próprio nesta versão
+  // (ver README "O que foi deliberadamente deixado de fora"); ficam marcadas
+  // como "em breve" mas já preparam a estrutura para quando existirem.
+  var CATEGORIA_STORAGE_KEY = "j8_categoria_v1";
+
+  var CATEGORIAS = [
+    { key: "cabelo_fem", label: "Cabelo Feminino", emoji: "💇‍♀️", cls: "cc-fem", genero: "feminino" },
+    { key: "cabelo_masc", label: "Cabelo Masculino", emoji: "💇‍♂️", cls: "cc-masc", genero: "masculino" },
+    { key: "maquilhagem", label: "Maquilhagem", emoji: "💄", cls: "cc-make", emBreve: true },
+    { key: "skincare", label: "Skincare", emoji: "✨", cls: "cc-skin", emBreve: true }
+  ];
+
+  var categoriaAtual = null;
+
+  function carregarCategoriaSalva() {
+    try { return window.localStorage.getItem(CATEGORIA_STORAGE_KEY); }
+    catch (e) { return null; }
+  }
+  function salvarCategoriaEscolhida(key) {
+    try { window.localStorage.setItem(CATEGORIA_STORAGE_KEY, key); } catch (e) {}
+  }
+  function categoriaPorKey(key) {
+    for (var i = 0; i < CATEGORIAS.length; i++) if (CATEGORIAS[i].key === key) return CATEGORIAS[i];
+    return null;
+  }
+
+  function inicializarCategoria() {
+    renderSeletorCategoriaInicial();
+    renderBarraCategorias();
+    var salva = carregarCategoriaSalva();
+    if (salva && categoriaPorKey(salva)) {
+      aplicarCategoria(salva);
+    } else {
+      document.getElementById("painelCategoria").style.display = "block";
+      document.getElementById("appMain").style.display = "none";
+    }
+  }
+
+  function renderSeletorCategoriaInicial() {
+    var html = "";
+    CATEGORIAS.forEach(function (c) {
+      html +=
+        '<div class="category-card ' + c.cls + '" data-cat="' + c.key + '">' +
+        '<span class="cc-emoji">' + c.emoji + '</span>' +
+        '<span class="cc-label">' + c.label + '</span>' +
+        (c.emBreve ? '<span class="cc-soon">Em breve</span>' : "") +
+        "</div>";
+    });
+    document.getElementById("categoriaGrid").innerHTML = html;
+    document.querySelectorAll("#categoriaGrid .category-card").forEach(function (card) {
+      card.addEventListener("click", function () {
+        var key = card.getAttribute("data-cat");
+        salvarCategoriaEscolhida(key);
+        aplicarCategoria(key);
+      });
+    });
+  }
+
+  function renderBarraCategorias() {
+    var html = "";
+    CATEGORIAS.forEach(function (c) {
+      var ativa = c.key === categoriaAtual;
+      html +=
+        '<div class="category-pill ' + (ativa ? "active" : "") + '" data-cat="' + c.key + '">' +
+        c.emoji + " " + c.label +
+        (c.emBreve ? '<span class="cp-soon">Em breve</span>' : "") +
+        "</div>";
+    });
+    document.getElementById("categoriaBar").innerHTML = html;
+    document.querySelectorAll("#categoriaBar .category-pill").forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        var key = pill.getAttribute("data-cat");
+        salvarCategoriaEscolhida(key);
+        aplicarCategoria(key);
+      });
+    });
+  }
+
+  function aplicarCategoria(key) {
+    var cat = categoriaPorKey(key);
+    if (!cat) return;
+    categoriaAtual = key;
+
+    document.getElementById("painelCategoria").style.display = "none";
+    document.getElementById("appMain").style.display = "block";
+    renderBarraCategorias();
+
+    var emBreve = document.getElementById("painelEmBreve");
+    var avaliacaoTab = document.querySelector('#mainTabs .tab[data-tab="avaliacao"]');
+
+    if (cat.emBreve) {
+      emBreve.style.display = "block";
+      document.getElementById("painelAvaliacao").style.display = "none";
+      document.getElementById("painelFicha").style.display = "none";
+      document.getElementById("painelAgenda").style.display = "none";
+      if (avaliacaoTab) avaliacaoTab.style.display = "none";
+    } else {
+      emBreve.style.display = "none";
+      if (avaliacaoTab) {
+        avaliacaoTab.style.display = "";
+        document.querySelectorAll("#mainTabs .tab").forEach(function (t) { t.classList.remove("active"); });
+        avaliacaoTab.classList.add("active");
+      }
+      document.getElementById("painelAvaliacao").style.display = "block";
+      document.getElementById("painelFicha").style.display = "none";
+      document.getElementById("painelAgenda").style.display = "none";
+      // Pré-seleciona o género no quiz conforme a categoria escolhida —
+      // continua editável, é só um ponto de partida coerente com a escolha.
+      if (cat.genero) {
+        selecoes.genero = cat.genero;
+        var grupo = document.querySelector('.options[data-group="genero"]');
+        if (grupo) {
+          grupo.querySelectorAll(".opt").forEach(function (o) {
+            o.classList.toggle("selected", o.getAttribute("data-value") === cat.genero);
+          });
+        }
+      }
+    }
+    renderGamificacao();
+  }
+
+  var voltarCabeloBtn = document.getElementById("voltarCabeloBtn");
+  if (voltarCabeloBtn) {
+    voltarCabeloBtn.addEventListener("click", function () {
+      salvarCategoriaEscolhida("cabelo_fem");
+      aplicarCategoria("cabelo_fem");
+    });
+  }
 
   // ============================================================
   // 1. Moeda
@@ -117,6 +255,11 @@
   // rating/reviews são dados ILUSTRATIVOS para demonstrar o padrão visual
   // (prova social ao estilo Amazon/Sephora) — substituir por dados reais
   // assim que existirem avaliações de clientes verdadeiras.
+  // Marca única usada nesta fase do protótipo (pedido explícito: "só uma
+  // marca, tipo coreana" para simplificar antes de negociar um fornecedor
+  // real). Fictícia — substituir por dados reais assim que houver parceria.
+  var BRAND = { nome: "HANA LAB", emoji: "🌿", tagline: "Ritual capilar K-beauty inspirado em scalp skinification" };
+
   var CATALOGO = {
     fase1: { nome: "Fase 1 — Esfoliante de couro cabeludo", essential: 18, clinical: 30, rating: 4.7, reviews: 312, badge: "Mais vendido" },
     fase2: { nome: "Fase 2 — Base (shampoo + condicionador)", essential: 32, clinical: 50, rating: 4.5, reviews: 208, badge: null },
@@ -246,7 +389,8 @@
   function renderFichaTecnica(faseKey) {
     var ft = FICHA_TECNICA[faseKey];
     var html = '<div class="ficha-tecnica">';
-    html += '<div class="media-placeholder">📷 Imagem do produto — substituir por foto real do fornecedor</div>';
+    html += '<span class="brand-pill">' + BRAND.emoji + ' ' + BRAND.nome + '</span>';
+    html += '<div class="media-placeholder">📷 Imagem ' + BRAND.nome + ' — substituir por foto real do fornecedor</div>';
     html += '<div class="media-placeholder video">▶ Vídeo demonstrativo de modo de uso — substituir por conteúdo real</div>';
     html += '<p class="ft-desc">' + ft.descricao + '</p>';
     html += '<strong class="ft-label">Como usar</strong><ol class="ft-list">';
@@ -328,6 +472,7 @@
   }
 
   var carrinho = carregarCarrinhoSalvo();
+  var quizCompleto = false;
 
   function renderMenuProtocolo() {
     var objetivo = selecoes.objetivo || "frizz";
@@ -354,6 +499,7 @@
         '<span class="pc-add-mark">✓</span>' +
         '</label>' +
         '<div class="media-placeholder pc-img">📷</div>' +
+        '<span class="brand-pill">' + BRAND.emoji + ' ' + BRAND.nome + '</span>' +
         '<h3 class="pc-title">' + cat.nome + '</h3>' +
         '<div class="pc-rating">' + renderStars(cat.rating) + ' <span class="rating-num">' + cat.rating.toFixed(1) + '</span> <span class="rating-count">(' + cat.reviews + ' avaliações)</span></div>' +
         '<ul class="pc-bullets">' +
@@ -470,6 +616,7 @@
 
   function atualizarTotalCarrinho() {
     salvarCarrinho();
+    renderGamificacao();
     document.getElementById("carrinhoTotalBox").innerHTML =
       "<strong>Total das possibilidades selecionadas: " + fmt(totalCarrinho()) +
       "</strong> — sem limite de orçamento aplicado. Ajuste livremente o que faz sentido oferecer.";
@@ -501,6 +648,44 @@
         btn.href = linkWhatsApp(linhas.join("\n"));
       }
     }
+  }
+
+  // ============================================================
+  // 5.5 Gamificação — pontos, barra de progresso e conquistas
+  // ============================================================
+  // Puramente cosmético/motivacional (não altera preços nem promete
+  // descontos além do desconto de boas-vindas do WhatsApp já existente).
+  var CONQUISTAS = [
+    { id: "diag", emoji: "🌟", label: "Diagnóstico feito", check: function () { return quizCompleto; } },
+    { id: "inicio", emoji: "🔥", label: "Protocolo em construção", check: function () { return contarFasesNoCarrinho() >= 1; } },
+    { id: "combo", emoji: "💎", label: "Combo iniciado", check: function () { return contarFasesNoCarrinho() >= 3; } },
+    { id: "completo", emoji: "👑", label: "Protocolo completo", check: function () { return contarFasesNoCarrinho() >= Object.keys(CATALOGO).length; } }
+  ];
+
+  function contarFasesNoCarrinho() {
+    return Object.keys(carrinho.fases).filter(function (k) { return carrinho.fases[k].incluido; }).length;
+  }
+
+  function renderGamificacao() {
+    var bar = document.getElementById("gamifyBar");
+    if (!bar) return;
+    var totalFases = Object.keys(CATALOGO).length;
+    var fasesFeitas = contarFasesNoCarrinho();
+    var percent = Math.min(100, Math.round((fasesFeitas / totalFases) * 100));
+    var pontos = Math.round(totalCarrinho()) + (quizCompleto ? 20 : 0);
+
+    var html = '<div class="gamify-top">' +
+      '<div class="gamify-points">✨ <span class="gp-num">' + pontos + '</span> pontos J8</div>' +
+      '<div class="gamify-hint">' + fasesFeitas + '/' + totalFases + ' fases do protocolo escolhidas</div>' +
+      '</div>' +
+      '<div class="progress-track"><div class="progress-fill" style="width:' + percent + '%;"></div></div>' +
+      '<div class="badge-row">';
+    CONQUISTAS.forEach(function (c) {
+      var desbloqueada = c.check();
+      html += '<span class="badge-chip' + (desbloqueada ? "" : " locked") + '">' + c.emoji + " " + c.label + "</span>";
+    });
+    html += "</div>";
+    bar.innerHTML = html;
   }
 
   // ============================================================
@@ -550,6 +735,7 @@
     if (!selecoes.subtom) selecoes.subtom = "neutro";
 
     carrinho = { fases: {}, servicos: {} }; // reinicia a cada nova avaliação
+    quizCompleto = true;
     renderHarmonia();
     renderMenuProtocolo();
 
@@ -558,6 +744,7 @@
     document.getElementById("orcamentoResultado").style.display = "none";
     document.getElementById("salvarFichaMsg").innerHTML = "";
     document.getElementById("resultado").scrollIntoView({ behavior: "smooth", block: "start" });
+    renderGamificacao();
   });
 
   // ============================================================
