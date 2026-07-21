@@ -1,6 +1,6 @@
 """Page object for index.html (login / sign up)."""
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -49,7 +49,19 @@ class LoginPage:
         pw_el = self.driver.find_element(*self.SIGNUP_PASSWORD)
         pw_el.send_keys(password)
         self.driver.find_element(*self.SIGNUP_SUBMIT).click()
-        if not self.driver.execute_script("return arguments[0].checkValidity();", pw_el):
+        try:
+            client_blocked = not self.driver.execute_script(
+                "return arguments[0].checkValidity();", pw_el
+            )
+        except StaleElementReferenceException:
+            # A *valid* password (>= 6 chars) lets the click through, and the
+            # app can redirect to app.html fast enough that the password
+            # input is already gone from the DOM by the time we get here —
+            # checking checkValidity() on a detached element throws stale
+            # element reference. That's not a validation block, it's the
+            # success path finishing early, so treat it as "not blocked".
+            client_blocked = False
+        if client_blocked:
             # The password input has minlength="6" — the browser's own HTML5
             # constraint validation blocks the submit client-side before any
             # request reaches the server (e.g. a 3- or 5-character password).
@@ -62,8 +74,14 @@ class LoginPage:
         """True if the signup password field currently fails the browser's
         own HTML5 constraint validation (minlength=6) — i.e. the form was
         blocked from ever submitting, before app.js or the server saw it."""
-        el = self.driver.find_element(*self.SIGNUP_PASSWORD)
-        return not self.driver.execute_script("return arguments[0].checkValidity();", el)
+        try:
+            el = self.driver.find_element(*self.SIGNUP_PASSWORD)
+            return not self.driver.execute_script("return arguments[0].checkValidity();", el)
+        except StaleElementReferenceException:
+            # Element already gone from the DOM (page navigated away after a
+            # successful, valid-password submit) — that's the opposite of
+            # "blocked", so it does not count as client-invalid.
+            return False
 
     def log_in(self, email, password):
         self.driver.find_element(*self.LOGIN_EMAIL).send_keys(email)

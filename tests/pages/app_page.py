@@ -43,6 +43,14 @@ class AppPage:
     CART_TOTAL_BOX_MAQUILHAGEM = (By.ID, "carrinhoTotalBoxMaquilhagem")
     CART_TOTAL_BOX_SKINCARE = (By.ID, "carrinhoTotalBoxSkincare")
 
+    ATIVAR_ORCAMENTO_BTN = (By.ID, "ativarOrcamentoBtn")
+    BLOCO_ORCAMENTO = (By.ID, "blocoOrcamento")
+    BUDGET_SLIDER = (By.ID, "budgetSlider")
+    GERAR_ORCAMENTO_BTN = (By.ID, "gerarOrcamentoBtn")
+    ORCAMENTO_RESULTADO = (By.ID, "orcamentoResultado")
+    WHATSAPP_PREVIEW = (By.ID, "whatsappPreview")
+    CURRENCY_TOGGLE_BTN = (By.CSS_SELECTOR, '#currencyToggle button[data-cur="{cur}"]')
+
     def __init__(self, driver, base_url):
         self.driver = driver
         self.base_url = base_url
@@ -131,3 +139,43 @@ class AppPage:
     def logout(self):
         self.driver.find_element(*self.LOGOUT_BTN).click()
         self.wait.until(EC.url_contains("index.html"))
+
+    # ---------- orçamento com limite de gasto (desconto de boas-vindas) ----------
+
+    def activate_budget_quote(self):
+        self.driver.find_element(*self.ATIVAR_ORCAMENTO_BTN).click()
+        self.wait.until(EC.visibility_of_element_located(self.BLOCO_ORCAMENTO))
+
+    def set_budget(self, value_eur):
+        """Sets the budget slider via JS and fires the same 'input' event the
+        real drag would, so the UI's live label updates exactly as it would
+        for a user dragging it — deterministic, unlike a pixel-based drag."""
+        slider = self.driver.find_element(*self.BUDGET_SLIDER)
+        self.driver.execute_script(
+            "arguments[0].value = arguments[1];"
+            "arguments[0].dispatchEvent(new Event('input'));",
+            slider,
+            value_eur,
+        )
+
+    def generate_quote(self):
+        self.driver.find_element(*self.GERAR_ORCAMENTO_BTN).click()
+        self.wait.until(EC.visibility_of_element_located(self.ORCAMENTO_RESULTADO))
+
+    def whatsapp_preview_text(self):
+        return self.driver.find_element(*self.WHATSAPP_PREVIEW).text
+
+    def last_quote_total_eur(self):
+        """Reads window.__ultimoOrcamentoFechado.totalEUR — the raw,
+        pre-discount total the quote was built from, as ground truth to
+        check the displayed (rounded) discount math against."""
+        return self.driver.execute_script(
+            "return window.__ultimoOrcamentoFechado && window.__ultimoOrcamentoFechado.totalEUR;"
+        )
+
+    def set_currency(self, cur):
+        locator = (By.CSS_SELECTOR, self.CURRENCY_TOGGLE_BTN[1].format(cur=cur))
+        self.driver.find_element(*locator).click()
+
+    def budget_val_text(self):
+        return self.driver.find_element(By.ID, "budgetVal").text
