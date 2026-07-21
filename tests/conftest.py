@@ -38,8 +38,7 @@ def base_url(request):
     return request.config.getoption("--base-url") or BASE_URL
 
 
-@pytest.fixture
-def driver():
+def _new_chrome_driver():
     options = Options()
     if HEADLESS:
         options.add_argument("--headless=new")
@@ -53,6 +52,24 @@ def driver():
 
     drv = webdriver.Chrome(options=options)
     drv.implicitly_wait(5)
+    return drv
+
+
+@pytest.fixture
+def driver():
+    drv = _new_chrome_driver()
+    yield drv
+    drv.quit()
+
+
+@pytest.fixture
+def second_driver():
+    """A second, fully independent browser session (its own cookie jar) —
+    used to simulate two different people/devices acting at the same time
+    (e.g. two different users clicking 'book' on the same slot at once).
+    Kept separate from `driver` so both fixtures can be requested together
+    in the same test without one tearing down the other's session."""
+    drv = _new_chrome_driver()
     yield drv
     drv.quit()
 

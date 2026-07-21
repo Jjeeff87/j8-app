@@ -75,15 +75,54 @@ soon" placeholder).
 | BOOK-02 | "My bookings" | Positive | A booking was just made | View "Minhas marcações" | The new booking is listed | `test_booking.py::test_booking_appears_in_my_bookings` |
 | BOOK-03 | Double booking | Negative / Boundary | A slot was just booked for professional X | `POST /api/agenda/marcar` again with the **same** `profissionalId` + `horarioISO` | Second request rejected (`409`, JSON `error` field) — the slot cannot be double-booked | `test_booking.py::test_double_booking_same_slot_is_rejected` |
 
+## Pricing, rounding & the welcome discount (`test_pricing.py`)
+
+Targets `public/app.js`'s `aplicarDesconto` / `fmtParDesconto` (10% "welcome
+discount" applied to a budget quote) and currency conversion — the class of
+bug that's easy to miss in a demo and embarrassing in production: totals
+that don't add back up once a percentage discount is rounded for display.
+
+| ID | Feature | Type | Preconditions | Input | Expected Output | Automation |
+|---|---|---|---|---|---|---|
+| MONEY-01 | Welcome discount rounding | Regression / Boundary | Hair quiz submitted, budget quote panel open | Budget set to each of 8 values spanning the full slider range (€80–€700, the `min`/`max` boundaries plus 6 points in between) | The displayed discount + displayed total-with-discount always sum back to the rounded original total — **regression test for a real bug found and fixed while writing this suite**: they used to be rounded independently and could be off by €1 (e.g. €65 total showed "-€7" + "€59" = €66) | `test_pricing.py::test_welcome_discount_and_total_always_sum_back_to_original[80\|180\|280\|380\|480\|580\|680\|700]` (8 parametrized cases) |
+| MONEY-02 | Welcome discount amount | Positive | Budget quote generated (€300) | Read the displayed discount | Discount is within €1 of exactly 10% of the pre-discount total | `test_pricing.py::test_welcome_discount_is_approximately_ten_percent` |
+| MONEY-03 | Budget quote | Boundary (lower) | Budget slider at its documented minimum (€80) | Generate quote | No negative totals or negative-looking euro amounts anywhere in the output | `test_pricing.py::test_budget_slider_minimum_boundary_produces_no_negative_totals` |
+| MONEY-04 | Budget quote | Boundary (upper) | Budget slider at its documented maximum (€700) | Generate quote | Discount/total rounding invariant still holds at the opposite edge of the range | `test_pricing.py::test_budget_slider_maximum_boundary_still_balances` |
+| MONEY-05 | Budget quote | Negative / Defensive | Budget quote generated | Inspect the full rendered preview text | No raw `NaN` or `undefined` leaks into user-facing output | `test_pricing.py::test_no_nan_or_undefined_leaks_into_quote_preview` |
+| MONEY-06 | Currency conversion | Positive | Budget slider set to €100 | Toggle currency EUR → BRL (fixed 5.6× rate) | BRL label = EUR label × 5.6, both reflecting the same underlying amount consistently | `test_pricing.py::test_currency_toggle_keeps_cart_and_budget_label_consistent` |
+
+## Concurrency — two different people at the same time (`test_concurrency.py`)
+
+Real two-session concurrency, not sequential double-submits: two independent,
+already-authenticated browser sessions (separate cookie jars) fire requests
+via `ThreadPoolExecutor` so both are genuinely in flight together. This is
+the scenario asked about most in real interviews — "what happens when two
+different people click at the same instant?" — verified against actual
+server behavior (`server.js` uses synchronous file I/O with no `await`
+between its read-check-write steps, so Node's single-threaded event loop
+can't interleave two requests mid-handler; these tests prove that holds).
+
+| ID | Feature | Type | Preconditions | Input | Expected Output | Automation |
+|---|---|---|---|---|---|---|
+| RACE-01 | Double booking, two different users | Negative / Boundary | Two separate accounts, both viewing the same first available slot | Both `POST /api/agenda/marcar` for the identical `profissionalId`+`horarioISO`, fired concurrently | Exactly one succeeds (`200`, `ok:true`); the other is rejected (`409`) — never both, never neither | `test_concurrency.py::test_two_different_users_double_click_same_slot_only_one_wins` |
+| RACE-02 | Booking different slots, two different users | Positive | Two separate accounts, same professional, two distinct available slots | Both book concurrently, each their own slot | Both succeed — proves the race guard locks on the exact slot, not the whole professional/calendar | `test_concurrency.py::test_two_different_users_booking_different_slots_both_succeed` |
+| RACE-03 | Duplicate signup, two sessions | Negative / Boundary | No account yet for e-mail X | Two `POST /api/signup` for the **same** e-mail X, fired concurrently from two different sessions | Exactly one account is created (`200`); the other is rejected (`409` duplicate) — never two accounts for one e-mail | `test_concurrency.py::test_two_concurrent_signups_same_email_only_one_succeeds` |
+
 ## Coverage notes
 
-- All 28 automated cases above were executed against a local instance
-  (`node server.js`) during this work: the Selenium/Pytest suite itself
-  could not be *run* inside this sandbox (PyPI access is blocked here —
-  see `tests/README.md`), so each one was independently verified with
-  equivalent Playwright scripts and/or direct `curl` calls against the
-  same running server before being committed, and the assertions in this
-  document reflect those verified results, not assumptions.
+- 44 automated test cases in total (28 from the original suite + 16 added
+  in this round: 8 parametrized pricing/rounding cases + 3 more pricing
+  cases + 3 real two-session concurrency cases — see the two tables above).
+- All cases were executed against a local instance (`node server.js`)
+  during this work: the Selenium/Pytest suite itself could not be *run*
+  inside this sandbox (PyPI access is blocked here — see
+  `tests/README.md`), so each one was independently verified with
+  equivalent Playwright scripts and/or direct `fetch()`/`curl` calls
+  against the same running server before being committed — including the
+  concurrency cases, verified with two real, independent browser contexts
+  racing each other — and the assertions in this document reflect those
+  verified results, not assumptions. The full suite also runs for real on
+  every push via GitHub Actions (see the root `README.md` "Tests" badge).
 - Not yet covered by an automated case (tracked as follow-up work, not
   silently skipped): file-upload flows (none exist in the app yet), rate
   limiting on login attempts (the app doesn't implement any yet — see
