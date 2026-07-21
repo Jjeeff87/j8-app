@@ -214,6 +214,28 @@
     return { valorEUR: valor, totalComDescontoEUR: totalEUR - valor };
   }
 
+  // Formata o par "valor do desconto" + "total com desconto" garantindo que
+  // os dois números arredondados exibidos somam sempre de volta ao total
+  // original arredondado. Arredondar cada valor de forma independente
+  // (ex.: fmt(valor) e fmt(totalComDesconto) em separado) pode divergir em
+  // 1 unidade — ex.: total de €65 → desconto mostrado "-€7" mas total
+  // mostrado "€59", que somam €66 em vez de €65. Em vez disso, arredonda-se
+  // o total original e o total-com-desconto primeiro, e o valor do desconto
+  // exibido é a diferença entre os dois já arredondados — assim a conta
+  // bate sempre, no cêntimo/unidade certa, em qualquer moeda selecionada.
+  function fmtParDesconto(totalEUR, totalComDescontoEUR) {
+    var symbol = currency === "EUR" ? "€" : "R$";
+    var totalConv = totalEUR * FX[currency];
+    var totalComDescontoConv = totalComDescontoEUR * FX[currency];
+    var totalArred = Math.round(totalConv);
+    var totalComDescontoArred = Math.round(totalComDescontoConv);
+    var descontoArred = totalArred - totalComDescontoArred;
+    return {
+      descontoFmt: symbol + descontoArred,
+      totalFmt: symbol + totalComDescontoArred
+    };
+  }
+
   function linkWhatsApp(mensagem) {
     return "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(mensagem);
   }
@@ -1017,10 +1039,11 @@
             if (p) linhas.push("• " + p.nome + " — " + fmt(p.preco));
           }
         });
+        var parFmtCarrinho = fmtParDesconto(totalEUR, desc.totalComDescontoEUR);
         linhas.push("");
         linhas.push("Subtotal: " + fmt(totalEUR));
-        linhas.push("Desconto de boas-vindas (código " + DESCONTO_WHATSAPP.codigo + ", -" + DESCONTO_WHATSAPP.percentagem + "%): -" + fmt(desc.valorEUR));
-        linhas.push("Total: " + fmt(desc.totalComDescontoEUR));
+        linhas.push("Desconto de boas-vindas (código " + DESCONTO_WHATSAPP.codigo + ", -" + DESCONTO_WHATSAPP.percentagem + "%): -" + parFmtCarrinho.descontoFmt);
+        linhas.push("Total: " + parFmtCarrinho.totalFmt);
         btn.href = linkWhatsApp(linhas.join("\n"));
       }
     }
@@ -1276,9 +1299,10 @@
       : "💬 Limite praticamente todo direcionado à queixa principal.");
 
     var descOrc = aplicarDesconto(totalGasto);
+    var parFmtOrc = fmtParDesconto(totalGasto, descOrc.totalComDescontoEUR);
     linhas.push("");
-    linhas.push("Desconto de boas-vindas (código " + DESCONTO_WHATSAPP.codigo + ", -" + DESCONTO_WHATSAPP.percentagem + "%): -" + fmt(descOrc.valorEUR));
-    linhas.push("Total com desconto: " + fmt(descOrc.totalComDescontoEUR));
+    linhas.push("Desconto de boas-vindas (código " + DESCONTO_WHATSAPP.codigo + ", -" + DESCONTO_WHATSAPP.percentagem + "%): -" + parFmtOrc.descontoFmt);
+    linhas.push("Total com desconto: " + parFmtOrc.totalFmt);
     linhas.push("");
     linhas.push("Quero confirmar este pedido.");
     document.getElementById("whatsappPreview").textContent = linhas.join("\n");
