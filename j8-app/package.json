@@ -1,0 +1,13 @@
+{
+  "name": "j8-app",
+  "version": "0.3.0",
+  "description": "J8 prototype, web app with login, category picker (Hair/Makeup/Skincare) sharing one cart, client records, protocol builder, gamification, quotes, booking, and orders. Zero external dependencies, runs on Node.js alone.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}
