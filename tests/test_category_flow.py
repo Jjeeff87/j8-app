@@ -1,7 +1,7 @@
 """
 Post-login category picker: Hair-Women / Hair-Men / Makeup / Skincare.
 
-All four categories route to the same account and the same cart — these
+All four categories route to the same account and the same cart, these
 tests check the picker itself, persistence across reload, and switching
 between categories. Makeup and Skincare are real curated product catalogs
 (5 items each, with technical sheets and video tutorials), not a stub.
@@ -71,7 +71,7 @@ def test_switching_back_from_makeup_restores_hair_flow(driver, base_url, signed_
 @pytest.mark.regression
 def test_makeup_product_ficha_has_real_video_tutorial(driver, base_url, signed_up_user):
     """Product technical sheets embed a real (researched, not invented)
-    YouTube tutorial — this checks the iframe src is a genuine embed URL,
+    YouTube tutorial, this checks the iframe src is a genuine embed URL,
     not a placeholder."""
     app_page = AppPage(driver, base_url)
     app_page.choose_category("cabelo_fem")

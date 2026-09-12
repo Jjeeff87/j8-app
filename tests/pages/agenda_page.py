@@ -31,9 +31,7 @@ class AgendaPage:
         assert slots, "expected at least one available slot"
         slots[0].click()
 
-        self.wait.until(
-            lambda d: d.find_element(*self.MARCAR_MSG).text.strip() != ""
-        )
+        self.wait.until(lambda d: d.find_element(*self.MARCAR_MSG).text.strip() != "")
         return self.driver.find_element(*self.MARCAR_MSG).text
 
     def my_bookings_text(self):

@@ -1,12 +1,12 @@
 """
-Real concurrency checks — two independent, already-authenticated browser
+Real concurrency checks, two independent, already-authenticated browser
 sessions (each its own cookie jar, simulating two different people on two
 different devices) firing requests genuinely at the same time via
 ThreadPoolExecutor, not one after another.
 
 This is different from test_booking.py::test_double_booking_same_slot_is_rejected,
 which proves the server rejects a *second* request from the *same* session
-after the first already succeeded — a real double-click, but from one person.
+after the first already succeeded, a real double-click, but from one person.
 The tests here are the scenario that comes up most often in real interviews:
 "what happens when two different people click 'book' on the same slot at
 the same instant?" Both fire together; only one may win.
@@ -55,7 +55,7 @@ def _open_agenda_first_slot(drv, base_url):
 
 def _post_marcar_async(drv, profissional_id, horario_iso, servico="Teste QA concorrência"):
     """Fires the booking fetch() from inside the given browser session.
-    Called from a worker thread — Selenium's remote-end HTTP call blocks
+    Called from a worker thread, Selenium's remote-end HTTP call blocks
     that thread while the real browser request is in flight, which is what
     lets two of these run genuinely overlapping via ThreadPoolExecutor."""
     return drv.execute_async_script(
@@ -68,9 +68,14 @@ def _post_marcar_async(drv, profissional_id, horario_iso, servico="Teste QA conc
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           credentials: 'same-origin',
-          body: JSON.stringify({profissionalId: profissionalId, horarioISO: horarioISO, servico: servico})
-        }).then(function (r) { return r.json().then(function (d) { done({status: r.status, body: d}); }); })
-          .catch(function (e) { done({status: -1, body: {error: String(e)}}); });
+          body: JSON.stringify({
+            profissionalId: profissionalId,
+            horarioISO: horarioISO,
+            servico: servico
+          })
+        }).then(function (r) {
+          return r.json().then(function (d) { done({status: r.status, body: d}); });
+        }).catch(function (e) { done({status: -1, body: {error: String(e)}}); });
         """,
         profissional_id,
         horario_iso,
@@ -86,9 +91,14 @@ def _post_signup_async(drv, base_url, email, password, nome):
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           credentials: 'same-origin',
-          body: JSON.stringify({email: arguments[1], password: arguments[2], nome: 'Race Signup'})
-        }).then(function (r) { return r.json().then(function (d) { done({status: r.status, body: d}); }); })
-          .catch(function (e) { done({status: -1, body: {error: String(e)}}); });
+          body: JSON.stringify({
+            email: arguments[1],
+            password: arguments[2],
+            nome: 'Race Signup'
+          })
+        }).then(function (r) {
+          return r.json().then(function (d) { done({status: r.status, body: d}); });
+        }).catch(function (e) { done({status: -1, body: {error: String(e)}}); });
         """,
         base_url + "/api/signup",
         email,
@@ -111,7 +121,7 @@ def test_two_different_users_double_click_same_slot_only_one_wins(driver, second
     prof_a, slot_a = _open_agenda_first_slot(driver, base_url)
     prof_b, slot_b = _open_agenda_first_slot(second_driver, base_url)
     # Both users must be looking at the same professional/slot for this to
-    # actually exercise the race — confirms the fixture setup is valid.
+    # actually exercise the race, confirms the fixture setup is valid.
     assert (prof_a, slot_a) == (prof_b, slot_b)
 
     with ThreadPoolExecutor(max_workers=2) as pool:
@@ -133,7 +143,7 @@ def test_two_different_users_double_click_same_slot_only_one_wins(driver, second
 def test_two_different_users_booking_different_slots_both_succeed(driver, second_driver, base_url):
     """Positive counterpart to the test above: two different people booking
     two DIFFERENT slots for the same professional at the same instant must
-    both succeed — proves the server's race guard locks on the specific
+    both succeed, proves the server's race guard locks on the specific
     (profissionalId, horarioISO) pair, not the whole professional/calendar."""
     creds_a = _fresh_credentials("c")
     creds_b = _fresh_credentials("d")
@@ -167,8 +177,11 @@ def test_two_different_users_booking_different_slots_both_succeed(driver, second
         result_b = future_b.result()
 
     for label, result in (("A/slot_1", result_a), ("B/slot_2", result_b)):
-        assert result["status"] == 200 and result["body"].get("ok") is True, (
-            "%s should have succeeded (different slots must not block each other): %s" % (label, result)
+        assert (
+            result["status"] == 200 and result["body"].get("ok") is True
+        ), "%s should have succeeded (different slots must not block each other): %s" % (
+            label,
+            result,
         )
 
 
@@ -176,8 +189,9 @@ def test_two_different_users_booking_different_slots_both_succeed(driver, second
 def test_two_concurrent_signups_same_email_only_one_succeeds(driver, second_driver, base_url):
     """Real-world race: two signup requests for the exact same email fired
     at the same instant (e.g. a double-submitted form, or two tabs). The
-    server must accept exactly one and reject the other as a duplicate —
-    never create two accounts for the same email."""
+    server must accept exactly one and reject the other as a duplicate,
+    never creating two accounts for the same email.
+    """
     stamp = uuid.uuid4().hex[:10]
     email = "qa-race-signup-%s@example.com" % stamp
     password = "senha123"
@@ -187,7 +201,9 @@ def test_two_concurrent_signups_same_email_only_one_succeeds(driver, second_driv
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         future_a = pool.submit(_post_signup_async, driver, base_url, email, password, "Race A")
-        future_b = pool.submit(_post_signup_async, second_driver, base_url, email, password, "Race B")
+        future_b = pool.submit(
+            _post_signup_async, second_driver, base_url, email, password, "Race B"
+        )
         result_a = future_a.result()
         result_b = future_b.result()
 

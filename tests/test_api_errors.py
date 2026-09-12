@@ -1,5 +1,5 @@
 """
-API-level input/output checks against server.js — regression coverage for
+API-level input/output checks against server.js, regression coverage for
 GitHub Issue #1 (malformed JSON was returning 500 instead of 400) plus a
 few adjacent negative/boundary cases on the same endpoints.
 
@@ -73,7 +73,9 @@ def test_signup_rejects_invalid_email_format(driver, base_url):
     driver.get(base_url + "/index.html")
 
     result = _post_json_raw(
-        driver, base_url, "/api/signup",
+        driver,
+        base_url,
+        "/api/signup",
         '{"email": "not-an-email", "password": "senha123", "nome": "QA"}',
     )
 
@@ -87,9 +89,10 @@ def test_well_formed_valid_signup_returns_200(driver, base_url, unique_credentia
     signup payload returns 200 with the expected echoed fields."""
     driver.get(base_url + "/index.html")
 
-    payload = (
-        '{"email": "%s", "password": "%s", "nome": "%s"}'
-        % (unique_credentials["email"], unique_credentials["password"], unique_credentials["nome"])
+    payload = '{"email": "%s", "password": "%s", "nome": "%s"}' % (
+        unique_credentials["email"],
+        unique_credentials["password"],
+        unique_credentials["nome"],
     )
     result = _post_json_raw(driver, base_url, "/api/signup", payload)
 

@@ -65,8 +65,14 @@ def test_double_booking_same_slot_is_rejected(driver, base_url, signed_up_user):
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             credentials: 'same-origin',
-            body: JSON.stringify({profissionalId: profissionalId, horarioISO: horarioISO, servico: 'Teste QA'})
-          }).then(function (r) { return r.json().then(function (d) { return {status: r.status, body: d}; }); });
+            body: JSON.stringify({
+              profissionalId: profissionalId,
+              horarioISO: horarioISO,
+              servico: 'Teste QA'
+            })
+          }).then(function (r) {
+            return r.json().then(function (d) { return {status: r.status, body: d}; });
+          });
         }
         marcar().then(function (first) {
           marcar().then(function (second) { done({first: first, second: second}); });

@@ -1,5 +1,5 @@
-// J8 — servidor de protótipo (Node puro, sem dependências externas)
-// Motivo: evitar exigir "npm install" para testar — corre com `node server.js`.
+// J8, servidor de protótipo (Node puro, sem dependências externas)
+// Motivo: evitar exigir "npm install" para testar, corre com `node server.js`.
 // ATENÇÃO: isto é um protótipo para teste local. Antes de qualquer uso real com
 // dados de clientes de verdade, ver as notas de segurança no README.md deste projeto
 // e os documentos J8_PROFESSIONAL_EDITION.md / J8_FICHA_CLIENTE_IA.md (LGPD/RGPD).
@@ -37,7 +37,7 @@ function findUserByEmail(db, email) {
   return db.users.find((u) => u.email.toLowerCase() === String(email || "").toLowerCase());
 }
 
-// ---------- senha (crypto.scrypt — nativo do Node, sem dependência externa) ----------
+// ---------- senha (crypto.scrypt, nativo do Node, sem dependência externa) ----------
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto.scryptSync(String(password), salt, 64).toString("hex");
@@ -144,9 +144,9 @@ function serveStatic(req, res, pathname) {
 
 // ---------- profissionais parceiros (catálogo fixo, só para protótipo) ----------
 const PROFISSIONAIS = [
-  { id: "prof1", nome: "Marta Silva", especialidade: "Colorista — visagismo e colorimetria" },
-  { id: "prof2", nome: "Bruno Ferreira", especialidade: "Cortes — visagismo masculino e feminino" },
-  { id: "prof3", nome: "Inês Duarte", especialidade: "Tricologista — couro cabeludo e queda" }
+  { id: "prof1", nome: "Marta Silva", especialidade: "Colorista, visagismo e colorimetria" },
+  { id: "prof2", nome: "Bruno Ferreira", especialidade: "Cortes, visagismo masculino e feminino" },
+  { id: "prof3", nome: "Inês Duarte", especialidade: "Tricologista, couro cabeludo e queda" }
 ];
 
 function gerarSlotsDisponiveis(profissionalId, db) {

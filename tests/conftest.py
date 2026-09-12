@@ -1,7 +1,7 @@
 """
 Shared pytest fixtures for the J8 Selenium test suite.
 
-Runs against a live instance of the app — either the local `node server.js`
+Runs against a live instance of the app, either the local `node server.js`
 process (default, http://localhost:3000) or the deployed Render URL, via the
 BASE_URL environment variable:
 
@@ -18,7 +18,6 @@ import uuid
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
 
 BASE_URL = os.environ.get("BASE_URL", "http://localhost:3000").rstrip("/")
 HEADLESS = os.environ.get("HEADLESS", "1") != "0"
@@ -64,8 +63,9 @@ def driver():
 
 @pytest.fixture
 def second_driver():
-    """A second, fully independent browser session (its own cookie jar) —
-    used to simulate two different people/devices acting at the same time
+    """A second, fully independent browser session (its own cookie jar).
+
+    Used to simulate two different people/devices acting at the same time
     (e.g. two different users clicking 'book' on the same slot at once).
     Kept separate from `driver` so both fixtures can be requested together
     in the same test without one tearing down the other's session."""
@@ -88,7 +88,7 @@ def unique_credentials():
 @pytest.fixture
 def signed_up_user(driver, base_url, unique_credentials):
     """Signs up a brand-new account and leaves the browser on app.html,
-    logged in — the common starting point for most flow tests."""
+    logged in, the common starting point for most flow tests."""
     from tests.pages.login_page import LoginPage
 
     login_page = LoginPage(driver, base_url)

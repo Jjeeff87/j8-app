@@ -41,7 +41,7 @@ def test_login_with_wrong_password_shows_error(driver, base_url, signed_up_user)
 
 def test_signup_rejects_short_password(driver, base_url, unique_credentials):
     """Negative case: password below the 6-character minimum must be
-    rejected, not silently truncated or accepted. This is enforced twice —
+    rejected, not silently truncated or accepted. This is enforced twice:
     the signup form's `minlength="6"` blocks the browser from submitting at
     all (so the server never even sees the request), and server.js's own
     `password.length < 6` check is the fallback if that client-side check is
@@ -59,7 +59,7 @@ def test_signup_rejects_short_password(driver, base_url, unique_credentials):
 @pytest.mark.regression
 def test_signup_rejects_five_char_password_boundary(driver, base_url, unique_credentials):
     """Boundary case (negative side): exactly one character under the minimum
-    (5 chars) must still be rejected — guards against an off-by-one in either
+    (5 chars) must still be rejected, guards against an off-by-one in either
     the client's `minlength="6"` or the server's `< 6` check ever becoming
     `<= 6` or similar."""
     login_page = LoginPage(driver, base_url).open()
@@ -73,7 +73,7 @@ def test_signup_rejects_five_char_password_boundary(driver, base_url, unique_cre
 @pytest.mark.regression
 def test_signup_accepts_six_char_password_boundary(driver, base_url, unique_credentials):
     """Boundary case (positive side): exactly the minimum length (6 chars)
-    must be accepted — the documented minimum is inclusive."""
+    must be accepted, the documented minimum is inclusive."""
     login_page = LoginPage(driver, base_url).open()
     login_page.go_to_signup_tab()
     login_page.sign_up(unique_credentials["nome"], unique_credentials["email"], "abcdef")

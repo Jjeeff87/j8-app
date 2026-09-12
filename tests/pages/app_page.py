@@ -1,4 +1,4 @@
-"""Page object for app.html — category picker, quiz, cart, gamification."""
+"""Page object for app.html, category picker, quiz, cart, gamification."""
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -115,9 +115,13 @@ class AppPage:
     # ---------- quiz ----------
 
     def fill_and_submit_quiz(self, objetivo="frizz", genero=None, subtom="neutro"):
-        self.driver.find_element(By.CSS_SELECTOR, self.OBJETIVO_OPT[1].format(value=objetivo)).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, self.OBJETIVO_OPT[1].format(value=objetivo)
+        ).click()
         if genero:
-            self.driver.find_element(By.CSS_SELECTOR, self.GENERO_OPT[1].format(value=genero)).click()
+            self.driver.find_element(
+                By.CSS_SELECTOR, self.GENERO_OPT[1].format(value=genero)
+            ).click()
         self.driver.find_element(By.CSS_SELECTOR, self.SUBTOM_OPT[1].format(value=subtom)).click()
         self.driver.find_element(*self.QUIZ_SUBMIT).click()
         self.wait.until(EC.visibility_of_element_located(self.RESULTADO))
@@ -149,11 +153,10 @@ class AppPage:
     def set_budget(self, value_eur):
         """Sets the budget slider via JS and fires the same 'input' event the
         real drag would, so the UI's live label updates exactly as it would
-        for a user dragging it — deterministic, unlike a pixel-based drag."""
+        for a user dragging it, deterministic, unlike a pixel-based drag."""
         slider = self.driver.find_element(*self.BUDGET_SLIDER)
         self.driver.execute_script(
-            "arguments[0].value = arguments[1];"
-            "arguments[0].dispatchEvent(new Event('input'));",
+            "arguments[0].value = arguments[1];" "arguments[0].dispatchEvent(new Event('input'));",
             slider,
             value_eur,
         )
@@ -166,7 +169,7 @@ class AppPage:
         return self.driver.find_element(*self.WHATSAPP_PREVIEW).text
 
     def last_quote_total_eur(self):
-        """Reads window.__ultimoOrcamentoFechado.totalEUR — the raw,
+        """Reads window.__ultimoOrcamentoFechado.totalEUR, the raw,
         pre-discount total the quote was built from, as ground truth to
         check the displayed (rounded) discount math against."""
         return self.driver.execute_script(

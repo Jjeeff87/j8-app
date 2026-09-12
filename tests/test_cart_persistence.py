@@ -6,7 +6,6 @@ selections. Backed by localStorage on the client (see public/app.js).
 
 import pytest
 
-from tests.pages.login_page import LoginPage
 from tests.pages.app_page import AppPage
 
 
@@ -35,7 +34,9 @@ def test_cart_cleared_on_logout(driver, base_url, signed_up_user):
 
     app_page.logout()
 
-    stored_after_logout = driver.execute_script("return window.localStorage.getItem('j8_carrinho_v1');")
+    stored_after_logout = driver.execute_script(
+        "return window.localStorage.getItem('j8_carrinho_v1');"
+    )
     assert stored_after_logout is None
 
 
@@ -52,7 +53,7 @@ def test_full_protocol_unlocks_completion_badge(driver, base_url, signed_up_user
 @pytest.mark.regression
 def test_cart_is_shared_across_makeup_and_skincare(driver, base_url, signed_up_user):
     """Positive case: Makeup (mk1, EUR 34) and Skincare (sk1, EUR 24) share
-    one cart with Hair, tied to the account — adding an item in one category
+    one cart with Hair, tied to the account, adding an item in one category
     must be reflected in the combined total shown in the other."""
     app_page = AppPage(driver, base_url)
     app_page.choose_category("cabelo_fem")

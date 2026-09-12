@@ -56,13 +56,13 @@ class LoginPage:
         except StaleElementReferenceException:
             # A *valid* password (>= 6 chars) lets the click through, and the
             # app can redirect to app.html fast enough that the password
-            # input is already gone from the DOM by the time we get here —
-            # checking checkValidity() on a detached element throws stale
+            # input is already gone from the DOM by the time we get here.
+            # Checking checkValidity() on a detached element throws a stale
             # element reference. That's not a validation block, it's the
             # success path finishing early, so treat it as "not blocked".
             client_blocked = False
         if client_blocked:
-            # The password input has minlength="6" — the browser's own HTML5
+            # The password input has minlength="6", the browser's own HTML5
             # constraint validation blocks the submit client-side before any
             # request reaches the server (e.g. a 3- or 5-character password).
             # No app.js/server code ran at all, so there's nothing else to
@@ -72,14 +72,14 @@ class LoginPage:
 
     def signup_password_client_invalid(self):
         """True if the signup password field currently fails the browser's
-        own HTML5 constraint validation (minlength=6) — i.e. the form was
+        own HTML5 constraint validation (minlength=6), i.e. the form was
         blocked from ever submitting, before app.js or the server saw it."""
         try:
             el = self.driver.find_element(*self.SIGNUP_PASSWORD)
             return not self.driver.execute_script("return arguments[0].checkValidity();", el)
         except StaleElementReferenceException:
             # Element already gone from the DOM (page navigated away after a
-            # successful, valid-password submit) — that's the opposite of
+            # successful, valid-password submit), that's the opposite of
             # "blocked", so it does not count as client-invalid.
             return False
 
@@ -92,8 +92,8 @@ class LoginPage:
     def _wait_for_outcome(self):
         """Wait for whichever happens first after a login/signup submit: a
         redirect to app.html (success) or the error banner getting text
-        (failure). Using a single either/or wait — instead of only waiting
-        for the redirect — means negative-path tests resolve as soon as the
+        (failure). Using a single either/or wait, instead of only waiting
+        for the redirect, means negative-path tests resolve as soon as the
         error appears instead of blocking for the full timeout, and it
         removes the race condition where an assertion on error_text() could
         run before the async fetch()/response has finished rendering it."""

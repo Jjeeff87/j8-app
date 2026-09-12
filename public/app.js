@@ -2,7 +2,7 @@
   "use strict";
 
   // ============================================================
-  // 0. Autenticação — garante que só entra quem tem sessão válida
+  // 0. Autenticação, garante que só entra quem tem sessão válida
   // ============================================================
   var currentUser = null;
 
@@ -24,7 +24,7 @@
 
   document.getElementById("logoutBtn").addEventListener("click", function () {
     fetch("/api/logout", { method: "POST" }).then(function () {
-      // Limpa o carrinho e a categoria guardados localmente — evita que a
+      // Limpa o carrinho e a categoria guardados localmente, evita que a
       // próxima pessoa a usar este navegador/computador veja dados de outra cliente.
       try {
         window.localStorage.removeItem("j8_carrinho_v1");
@@ -35,9 +35,9 @@
   });
 
   // ============================================================
-  // 0.5 Categorias — universo escolhido depois do login
+  // 0.5 Categorias, universo escolhido depois do login
   // ============================================================
-  // Todas as categorias partilham a MESMA conta e o MESMO carrinho — a
+  // Todas as categorias partilham a MESMA conta e o MESMO carrinho, a
   // categoria é só um filtro de apresentação/entrada, não uma conta separada.
   // "Maquilhagem" e "Skincare" ainda não têm conteúdo próprio nesta versão
   // (ver README "O que foi deliberadamente deixado de fora"); ficam marcadas
@@ -143,8 +143,7 @@
       var avaliacaoTab = document.querySelector('#mainTabs .tab[data-tab="avaliacao"]');
       if (avaliacaoTab) avaliacaoTab.classList.add("active");
       painelAvaliacao.style.display = "block";
-      // Pré-seleciona o género no quiz conforme a categoria escolhida —
-      // continua editável, é só um ponto de partida coerente com a escolha.
+      // Pré-seleciona o género no quiz conforme a categoria escolhida,       // continua editável, é só um ponto de partida coerente com a escolha.
       if (cat.genero) {
         selecoes.genero = cat.genero;
         var grupo = document.querySelector('.options[data-group="genero"]');
@@ -198,15 +197,14 @@
   });
 
   // ============================================================
-  // 1.1 WhatsApp — número do negócio e desconto de boas-vindas
+  // 1.1 WhatsApp, número do negócio e desconto de boas-vindas
   // ============================================================
   // Número em formato internacional só com dígitos (sem +, espaços ou traços),
   // exigido pelo formato do link wa.me. Assumido indicativo de Portugal (+351)
-  // a partir do número fornecido — confirmar/alterar aqui se for outro país.
+  // a partir do número fornecido, confirmar/alterar aqui se for outro país.
   var WHATSAPP_NUMBER = "351917969355";
 
-  // Desconto de boas-vindas para primeiro pedido feito via link de WhatsApp —
-  // valor sugerido (10%), fácil de ajustar aqui numa linha só.
+  // Desconto de boas-vindas para primeiro pedido feito via link de WhatsApp,   // valor sugerido (10%), fácil de ajustar aqui numa linha só.
   var DESCONTO_WHATSAPP = { codigo: "BEMVINDAJ8", percentagem: 10 };
 
   function aplicarDesconto(totalEUR) {
@@ -218,10 +216,10 @@
   // os dois números arredondados exibidos somam sempre de volta ao total
   // original arredondado. Arredondar cada valor de forma independente
   // (ex.: fmt(valor) e fmt(totalComDesconto) em separado) pode divergir em
-  // 1 unidade — ex.: total de €65 → desconto mostrado "-€7" mas total
+  // 1 unidade, ex.: total de €65 → desconto mostrado "-€7" mas total
   // mostrado "€59", que somam €66 em vez de €65. Em vez disso, arredonda-se
   // o total original e o total-com-desconto primeiro, e o valor do desconto
-  // exibido é a diferença entre os dois já arredondados — assim a conta
+  // exibido é a diferença entre os dois já arredondados, assim a conta
   // bate sempre, no cêntimo/unidade certa, em qualquer moeda selecionada.
   function fmtParDesconto(totalEUR, totalComDescontoEUR) {
     var symbol = currency === "EUR" ? "€" : "R$";
@@ -273,19 +271,19 @@
   // 3. Catálogo (mesma lógica do protótipo anterior)
   // ============================================================
   // rating/reviews são dados ILUSTRATIVOS para demonstrar o padrão visual
-  // (prova social ao estilo Amazon/Sephora) — substituir por dados reais
+  // (prova social ao estilo Amazon/Sephora), substituir por dados reais
   // assim que existirem avaliações de clientes verdadeiras.
   // Marca única usada nesta fase do protótipo (pedido explícito: "só uma
   // marca, tipo coreana" para simplificar antes de negociar um fornecedor
-  // real). Fictícia — substituir por dados reais assim que houver parceria.
+  // real). Fictícia, substituir por dados reais assim que houver parceria.
   var BRAND = { nome: "HANA LAB", emoji: "🌿", tagline: "Ritual capilar K-beauty inspirado em scalp skinification" };
 
   var CATALOGO = {
-    fase1: { nome: "Fase 1 — Esfoliante de couro cabeludo", essential: 18, clinical: 30, rating: 4.7, reviews: 312, badge: "Mais vendido" },
-    fase2: { nome: "Fase 2 — Base (shampoo + condicionador)", essential: 32, clinical: 50, rating: 4.5, reviews: 208, badge: null },
-    fase3: { nome: "Fase 3 — Reconstrução / tratamento", essential: 35, clinical: 55, rating: 4.8, reviews: 176, badge: null },
-    fase4: { nome: "Fase 4 — Finalização / selagem", essential: 22, clinical: 38, rating: 4.6, reviews: 145, badge: null },
-    fase5: { nome: "Fase 5 — Booster de manutenção", essential: 25, clinical: 42, rating: 4.9, reviews: 89, badge: "Novo" }
+    fase1: { nome: "Fase 1: Esfoliante de couro cabeludo", essential: 18, clinical: 30, rating: 4.7, reviews: 312, badge: "Mais vendido" },
+    fase2: { nome: "Fase 2: Base (shampoo + condicionador)", essential: 32, clinical: 50, rating: 4.5, reviews: 208, badge: null },
+    fase3: { nome: "Fase 3: Reconstrução / tratamento", essential: 35, clinical: 55, rating: 4.8, reviews: 176, badge: null },
+    fase4: { nome: "Fase 4: Finalização / selagem", essential: 22, clinical: 38, rating: 4.6, reviews: 145, badge: null },
+    fase5: { nome: "Fase 5: Booster de manutenção", essential: 25, clinical: 42, rating: 4.9, reviews: 89, badge: "Novo" }
   };
 
   var SERVICOS = {
@@ -307,7 +305,7 @@
   // ============================================================
   // Não conseguimos ir buscar fotografias reais de stock a partir deste
   // ambiente (sem acesso de rede a bancos de imagem), por isso construímos
-  // um pequeno sistema de ícones ilustrados — muito mais visual do que o
+  // um pequeno sistema de ícones ilustrados, muito mais visual do que o
   // antigo placeholder de câmara, e sem depender de direitos de imagem de
   // terceiros. Cada tipo de embalagem (frasco conta-gotas, boião, cushion,
   // bisnaga, ampola, saqueta de máscara, pote) tem o seu próprio desenho.
@@ -321,42 +319,42 @@
       '</linearGradient></defs>';
     var body = "";
     switch (type) {
-      case "dropper": // frasco conta-gotas — essências, óleos, soros
+      case "dropper": // frasco conta-gotas, essências, óleos, soros
         body =
           '<rect x="16" y="4" width="16" height="10" rx="3" fill="url(#' + gid + ')"/>' +
           '<path d="M17 14h14v6a7 7 0 0 1-7 7 7 7 0 0 1-7-7z" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2"/>' +
           '<rect x="22" y="27" width="4" height="10" rx="2" fill="url(#' + gid + ')" opacity=".6"/>';
         break;
-      case "jar": // boião — máscaras, cremes
+      case "jar": // boião, máscaras, cremes
         body =
           '<rect x="10" y="8" width="28" height="6" rx="2" fill="url(#' + gid + ')"/>' +
           '<path d="M12 15h24l-2 21a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2"/>' +
           '<ellipse cx="24" cy="24" rx="8" ry="4" fill="url(#' + gid + ')" opacity=".35"/>';
         break;
-      case "tube": // bisnaga — limpeza, protetor
+      case "tube": // bisnaga, limpeza, protetor
         body =
           '<path d="M18 4h12l2 8H16z" fill="url(#' + gid + ')"/>' +
           '<path d="M16 12h16v20a8 8 0 0 1-8 8 8 8 0 0 1-8-8z" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2"/>' +
           '<rect x="19" y="18" width="10" height="4" rx="2" fill="url(#' + gid + ')" opacity=".5"/>';
         break;
-      case "cushion": // cushion compact — base, pó
+      case "cushion": // cushion compact, base, pó
         body =
           '<rect x="6" y="14" width="36" height="26" rx="8" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2"/>' +
           '<circle cx="24" cy="27" r="9" fill="url(#' + gid + ')" opacity=".55"/>' +
           '<rect x="6" y="8" width="36" height="8" rx="4" fill="url(#' + gid + ')"/>';
         break;
-      case "ampoule": // ampola — tratamentos concentrados
+      case "ampoule": // ampola, tratamentos concentrados
         body =
           '<path d="M21 4h6v10l7 20a4 4 0 0 1-4 5H18a4 4 0 0 1-4-5l7-20z" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2"/>' +
           '<rect x="19" y="3" width="10" height="4" rx="1.5" fill="url(#' + gid + ')"/>' +
           '<path d="M17 24h14l4 10a4 4 0 0 1-4 5H17a4 4 0 0 1-4-5z" fill="url(#' + gid + ')" opacity=".5"/>';
         break;
-      case "sachet": // saqueta — máscara de lençol
+      case "sachet": // saqueta, máscara de lençol
         body =
           '<rect x="6" y="6" width="36" height="36" rx="4" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2" stroke-dasharray="3 3"/>' +
           '<path d="M14 16c6 4 14 4 20 0v16c-6 6-14 6-20 0z" fill="url(#' + gid + ')" opacity=".45"/>';
         break;
-      case "pot": // pote pequeno — blush cremoso, balm
+      case "pot": // pote pequeno, blush cremoso, balm
         body =
           '<ellipse cx="24" cy="30" rx="16" ry="10" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2"/>' +
           '<ellipse cx="24" cy="22" rx="16" ry="10" fill="url(#' + gid + ')"/>' +
@@ -367,7 +365,7 @@
           '<rect x="21" y="4" width="6" height="22" rx="3" fill="url(#' + gid + ')"/>' +
           '<path d="M16 26h16l-3 16a5 5 0 0 1-5 4h0a5 5 0 0 1-5-4z" fill="#fff" stroke="url(#' + gid + ')" stroke-width="2"/>';
         break;
-      default: // spray — nevoeiro, tónico em spray
+      default: // spray, nevoeiro, tónico em spray
         body =
           '<rect x="20" y="4" width="8" height="6" rx="2" fill="url(#' + gid + ')"/>' +
           '<path d="M28 8l8-4 2 3-7 5" fill="url(#' + gid + ')"/>' +
@@ -382,7 +380,7 @@
   }
 
   // ============================================================
-  // 3.2 Tutoriais em vídeo — vídeos públicos reais do YouTube,
+  // 3.2 Tutoriais em vídeo, vídeos públicos reais do YouTube,
   // pesquisados (não inventados) para cada técnica de aplicação.
   // ============================================================
   function renderVideoTutorial(videoId, legenda) {
@@ -412,7 +410,7 @@
   };
 
   var VISAGISMO = {
-    oval: { corte_f: "repicados suaves e franjas laterais", corte_m: "praticamente qualquer corte funciona — é o formato mais versátil", evitar: "poucas restrições reais" },
+    oval: { corte_f: "repicados suaves e franjas laterais", corte_m: "praticamente qualquer corte funciona, é o formato mais versátil", evitar: "poucas restrições reais" },
     redondo: { corte_f: "comprimento abaixo do queixo, camadas e franja lateral, para alongar o rosto", corte_m: "topo com mais volume e laterais mais curtas (fade), para alongar visualmente", evitar: "cortes arredondados e curtos, que reforçam a largura" },
     quadrado: { corte_f: "franjas diagonais e cortes arredondados, para suavizar os ângulos", corte_m: "barba com linhas suaves (não retas) e topo com movimento", evitar: "cortes muito retos e simétricos, que acentuam os ângulos" },
     triangular: { corte_f: "camadas no topo e volume lateral, para equilibrar a base mais larga", corte_m: "barba mais cheia no queixo/mandíbula compensa a testa mais estreita", evitar: "cortes colados na lateral inferior, que reforçam a base larga" },
@@ -437,19 +435,19 @@
     mocha_mousse: "mocha mousse", vermelho_cobre: "vermelho cobre", preto_intenso: "preto intenso"
   };
 
-  // Ficha técnica por produto — conteúdo ilustrativo baseado nas tendências
+  // Ficha técnica por produto, conteúdo ilustrativo baseado nas tendências
   // já pesquisadas (J8_BUSINESS_PLAN.md, Seção 7). Substituir por dados reais
   // do fornecedor/INCI definitivo antes de uso comercial.
   // tendencia2026 + fonte: ideias reais pesquisadas (não inventadas) sobre
-  // para onde vai o hair care coreano em 2026 — usadas aqui como inspiração
+  // para onde vai o hair care coreano em 2026, usadas aqui como inspiração
   // de copy/posicionamento, não como alegação de ingrediente certificado.
   var FICHA_TECNICA = {
     fase1: {
       icone: "dropper",
-      descricao: "Esfoliante de couro cabeludo com ação de limpeza profunda — remove resíduo e oleosidade acumulada antes do início do protocolo (lógica de scalp skinification).",
+      descricao: "Esfoliante de couro cabeludo com ação de limpeza profunda, remove resíduo e oleosidade acumulada antes do início do protocolo (lógica de scalp skinification).",
       modoUso: [
         "Aplicar no couro cabeludo seco ou levemente húmido.",
-        "Massajar em movimentos circulares durante 2–3 minutos.",
+        "Massajar em movimentos circulares durante 2-3 minutos.",
         "Deixar atuar 3 minutos.",
         "Enxaguar bem antes do shampoo. Uso recomendado: 1x/semana durante a Fase 1."
       ],
@@ -457,22 +455,22 @@
       beneficios: ["Remove acúmulo de produto e oleosidade", "Prepara o couro cabeludo para melhor absorção nas fases seguintes"],
       evitarSe: ["Couro cabeludo com feridas ou irritação ativa", "Mesma semana de alisamento térmico"],
       rendimento: "Frasco de 100 ml, ~5 ml por uso, 1x/semana → rende aproximadamente 20 semanas (~4,5 meses) até a próxima compra.",
-      tendencia2026: "'Scalp skinificado' e carbonated scalp therapy — tratar o couro cabeludo com a mesma precisão de uma rotina de skincare facial, incluindo espumas carbonatadas que soltam oleosidade e estimulam a circulação.",
+      tendencia2026: "'Scalp skinificado' e carbonated scalp therapy, tratar o couro cabeludo com a mesma precisão de uma rotina de skincare facial, incluindo espumas carbonatadas que soltam oleosidade e estimulam a circulação.",
       videoId: "Z1eXeDALpDk"
     },
     fase2: {
       icone: "tube",
-      descricao: "Shampoo + condicionador de baixo poder residual — hidratação de base sem pesar o fio, antes de qualquer reconstrução.",
+      descricao: "Shampoo + condicionador de baixo poder residual, hidratação de base sem pesar o fio, antes de qualquer reconstrução.",
       modoUso: [
-        "Shampoo: massajar no couro cabeludo, 2–3x por semana.",
-        "Condicionador: aplicar do comprimento às pontas, deixar atuar 2–3 minutos.",
+        "Shampoo: massajar no couro cabeludo, 2-3x por semana.",
+        "Condicionador: aplicar do comprimento às pontas, deixar atuar 2-3 minutos.",
         "Enxaguar bem."
       ],
       ingredientes: ["Ceramidas vegetais", "Aminoácidos biomiméticos", "Complexo hidratante"],
       beneficios: ["Hidrata sem criar acúmulo", "Prepara a fibra para a reconstrução da Fase 3"],
       evitarSe: ["Sem enxague completo do produto da Fase 1"],
       rendimento: "Kit shampoo (250 ml) + condicionador (200 ml), ~10 ml por uso, 3x/semana → rende aproximadamente 8 semanas (~2 meses) até a próxima compra.",
-      tendencia2026: "Hanbang fusion — fórmulas de base que combinam ervas tradicionais coreanas com ativos modernos (peptídeos, ceramidas), em vez de apostar só num ou noutro.",
+      tendencia2026: "Hanbang fusion, fórmulas de base que combinam ervas tradicionais coreanas com ativos modernos (peptídeos, ceramidas), em vez de apostar só num ou noutro.",
       videoId: null
     },
     fase3: {
@@ -480,19 +478,19 @@
       descricao: "Máscara concentrada com ativos de reconstrução, indicada para dano estrutural e quebra.",
       modoUso: [
         "Aplicar do meio às pontas, após a lavagem.",
-        "Deixar atuar 10–15 minutos (seguir indicação da embalagem).",
-        "Enxaguar bem. Frequência: normalmente 1x por ciclo de 6 semanas — não repetir sem necessidade."
+        "Deixar atuar 10-15 minutos (seguir indicação da embalagem).",
+        "Enxaguar bem. Frequência: normalmente 1x por ciclo de 6 semanas, não repetir sem necessidade."
       ],
       ingredientes: ["Peptídeos reconstrutores", "Complexo proteico", "Ácido hialurônico"],
       beneficios: ["Repõe massa capilar", "Reduz sensação de quebra ao toque"],
-      evitarSe: ["Fio já rígido ao toque (sinal de excesso de proteína — ver princípio de honestidade)", "Uso repetido antes de novo ciclo"],
+      evitarSe: ["Fio já rígido ao toque (sinal de excesso de proteína, ver princípio de honestidade)", "Uso repetido antes de novo ciclo"],
       rendimento: "Bisnaga de 200 ml, ~20 ml por uso, 1x por ciclo de 6 semanas → rende aproximadamente 10 ciclos (~14 meses) até a próxima compra.",
-      tendencia2026: "Ampolas 'bond-repairing' — reconstrução a nível molecular da estrutura de queratina com aminoácidos e complexos de péptidos, o mesmo princípio por trás desta Fase 3.",
+      tendencia2026: "Ampolas 'bond-repairing', reconstrução a nível molecular da estrutura de queratina com aminoácidos e complexos de péptidos, o mesmo princípio por trás desta Fase 3.",
       videoId: null
     },
     fase4: {
       icone: "dropper",
-      descricao: "Leave-in/óleo selador — brilho, proteção e redução de frizz, sempre após a hidratação de base.",
+      descricao: "Leave-in/óleo selador, brilho, proteção e redução de frizz, sempre após a hidratação de base.",
       modoUso: [
         "Aplicar em cabelo limpo e já hidratado (nunca antes da Fase 2).",
         "Poucas gotas do meio às pontas.",
@@ -500,23 +498,23 @@
       ],
       ingredientes: ["Óleos vegetais leves", "Vitaminas antioxidantes"],
       beneficios: ["Sela a cutícula", "Reduz frizz visível"],
-      evitarSe: ["Fibra ainda desidratada — risco de selar o ressecamento para dentro"],
+      evitarSe: ["Fibra ainda desidratada, risco de selar o ressecamento para dentro"],
       rendimento: "Frasco de 100 ml, ~2 ml por uso, uso diário → rende aproximadamente 7 semanas (~1,5 mês) até a próxima compra.",
-      tendencia2026: "'Hair glazing' em casa — a mesma lógica do gloss de salão, democratizada em leave-ins que revestem a cutícula e criam brilho espelhado, reduzindo frizz sem pesar.",
+      tendencia2026: "'Hair glazing' em casa, a mesma lógica do gloss de salão, democratizada em leave-ins que revestem a cutícula e criam brilho espelhado, reduzindo frizz sem pesar.",
       videoId: null
     },
     fase5: {
       icone: "ampoule",
-      descricao: "Ampola concentrada de manutenção — mantém o resultado do ciclo sem repetir o protocolo inteiro.",
+      descricao: "Ampola concentrada de manutenção, mantém o resultado do ciclo sem repetir o protocolo inteiro.",
       modoUso: [
-        "Aplicar a cada 2–4 semanas, no couro cabeludo ou comprimento conforme objetivo.",
+        "Aplicar a cada 2-4 semanas, no couro cabeludo ou comprimento conforme objetivo.",
         "Sem enxague."
       ],
       ingredientes: ["Peptídeos", "Ativos bio-fermentados (ex.: kombucha, ginseng)"],
       beneficios: ["Sustenta o ganho da Fase 3 sem novo ciclo completo"],
       evitarSe: ["Antes de completar a Fase 3 pela primeira vez"],
-      rendimento: "Caixa com 4 ampolas, 1 ampola a cada 2–4 semanas → rende aproximadamente 2 a 4 meses até a próxima compra.",
-      tendencia2026: "'Bio-fermented brews' — kombucha, chá preto fermentado e ginseng envelhecido, fermentados para nutrientes mais biodisponíveis e concentrados.",
+      rendimento: "Caixa com 4 ampolas, 1 ampola a cada 2-4 semanas → rende aproximadamente 2 a 4 meses até a próxima compra.",
+      tendencia2026: "'Bio-fermented brews', kombucha, chá preto fermentado e ginseng envelhecido, fermentados para nutrientes mais biodisponíveis e concentrados.",
       videoId: null
     }
   };
@@ -543,75 +541,74 @@
     html += '<strong class="ft-label ft-warn">Não usar se</strong><ul class="ft-list ft-warn-list">';
     ft.evitarSe.forEach(function (e) { html += "<li>" + e + "</li>"; });
     html += '</ul>';
-    html += renderVideoTutorial(ft.videoId, "Rotina de oleagem e massagem no couro cabeludo (técnica geral — não é conteúdo da HANA LAB)");
+    html += renderVideoTutorial(ft.videoId, "Rotina de oleagem e massagem no couro cabeludo (técnica geral, não é conteúdo da HANA LAB)");
     html += '</div>';
     return html;
   }
 
   // ============================================================
-  // 3.3 Maquilhagem — catálogo curado, com base em tendências K-beauty
-  // 2026 pesquisadas (não é ainda um diagnóstico clínico como o de cabelo —
-  // é um kit inicial curado; um questionário próprio fica para outra fase).
+  // 3.3 Maquilhagem, catálogo curado, com base em tendências K-beauty
+  // 2026 pesquisadas (não é ainda um diagnóstico clínico como o de cabelo,   // é um kit inicial curado; um questionário próprio fica para outra fase).
   // ============================================================
   var MAQUILHAGEM_CATALOGO = {
     mk1: {
       nome: "Cushion Care-Fused (base + skincare)",
       preco: 34, rating: 4.8, reviews: 201, badge: "Mais vendido", icone: "cushion",
-      descricao: "Base cushion que funde skincare e cobertura — BB/CC com ativos de tratamento, para peles sensíveis não terem de escolher entre cuidado e cobertura.",
+      descricao: "Base cushion que funde skincare e cobertura, BB/CC com ativos de tratamento, para peles sensíveis não terem de escolher entre cuidado e cobertura.",
       modoUso: ["Bater (não arrastar) a esponja sobre a pele.", "Começar do centro do rosto para as laterais.", "Reaplicar só onde for preciso, ao longo do dia."],
       ingredientes: ["Niacinamida", "Ácido hialurónico", "FPS"],
       beneficios: ["Cobertura ajustável sem pesar", "Cuida da pele enquanto cobre"],
       evitarSe: ["Pele muito oleosa sem base fixadora por baixo, em dias muito quentes"],
-      rendimento: "Refil dura em média 2–3 meses com uso diário.",
-      tendencia2026: "'Care-Fused Makeup' — a linha entre skincare e maquilhagem a desaparecer: bases e BB/CC creams com ativos de tratamento a sério, não só cobertura.",
+      rendimento: "Refil dura em média 2-3 meses com uso diário.",
+      tendencia2026: "'Care-Fused Makeup', a linha entre skincare e maquilhagem a desaparecer: bases e BB/CC creams com ativos de tratamento a sério, não só cobertura.",
       videoId: "hVI8vBfYxyQ"
     },
     mk2: {
       nome: "Blush Cremoso Sweet Treat",
       preco: 19, rating: 4.7, reviews: 156, badge: "Novo", icone: "pot",
-      descricao: "Blush em creme com textura e cor inspiradas em sobremesas — aplicação com os dedos, para um efeito 'recém-corado' natural.",
+      descricao: "Blush em creme com textura e cor inspiradas em sobremesas, aplicação com os dedos, para um efeito 'recém-corado' natural.",
       modoUso: ["Aquecer uma pequena quantidade entre os dedos.", "Aplicar em pancadas leves na maçã do rosto.", "Esbater com a ponta dos dedos até fundir."],
       ingredientes: ["Manteigas emolientes", "Pigmentos micronizados"],
       beneficios: ["Efeito viçoso, não maquiado", "Funde-se com a pele sem marcar linhas"],
       evitarSe: ["Sobre pele muito oleosa sem pó fixador"],
-      rendimento: "Pote de 8 g, ~2–3 meses com uso diário.",
-      tendencia2026: "'Sweet Treat Formulas' — texturas e embalagens inspiradas em doces (sorvete, geleia, chiclete), tornando a rotina mais lúdica.",
+      rendimento: "Pote de 8 g, ~2-3 meses com uso diário.",
+      tendencia2026: "'Sweet Treat Formulas', texturas e embalagens inspiradas em doces (sorvete, geleia, chiclete), tornando a rotina mais lúdica.",
       videoId: null
     },
     mk3: {
       nome: "Lip Glow Balm Tint",
       preco: 16, rating: 4.9, reviews: 289, badge: null, icone: "tube",
-      descricao: "Bálsamo com tint de cor, efeito 'lábio mordido' e brilho húmido — o item mais fácil de usar de toda a rotina.",
+      descricao: "Bálsamo com tint de cor, efeito 'lábio mordido' e brilho húmido, o item mais fácil de usar de toda a rotina.",
       modoUso: ["Aplicar diretamente do bastão ou com o dedo.", "Dar pancadinhas no centro do lábio para um efeito degradê.", "Reaplicar sem necessidade de remover o anterior."],
       ingredientes: ["Óleos hidratantes", "Manteiga de karité", "Pigmento translúcido"],
       beneficios: ["Hidrata enquanto dá cor", "Não precisa de espelho para aplicar bem"],
       evitarSe: [],
       rendimento: "Bastão de 3,5 g, ~2 meses com uso diário.",
-      tendencia2026: "Continuação do 'Care-Fused Makeup' aplicado aos lábios — tint com cuidado embutido, em vez de batom seco tradicional.",
+      tendencia2026: "Continuação do 'Care-Fused Makeup' aplicado aos lábios, tint com cuidado embutido, em vez de batom seco tradicional.",
       videoId: null
     },
     mk4: {
       nome: "Pó Blur Soft-Focus",
       preco: 22, rating: 4.6, reviews: 133, badge: null, icone: "cushion",
-      descricao: "Pó compacto de efeito desfocado — disfarça poros e brilho sem 'apagar' a pele, mantendo um acabamento respirável.",
-      modoUso: ["Aplicar com pincel ou esponja, só nas zonas de mais brilho (zona T).", "Camada fina — não é para cobrir, é para desfocar.", "Retocar a meio do dia se necessário."],
+      descricao: "Pó compacto de efeito desfocado, disfarça poros e brilho sem 'apagar' a pele, mantendo um acabamento respirável.",
+      modoUso: ["Aplicar com pincel ou esponja, só nas zonas de mais brilho (zona T).", "Camada fina, não é para cobrir, é para desfocar.", "Retocar a meio do dia se necessário."],
       ingredientes: ["Sílica esférica", "Pós minerais leves"],
       beneficios: ["Efeito 'filtro' sem pesar", "Controla brilho sem ressecar"],
-      evitarSe: ["Peles muito secas — pode acentuar zonas ressequidas"],
-      rendimento: "Compacto de 8 g, ~4–5 meses com uso pontual.",
-      tendencia2026: "'Soft-Focus Perfection' — acabamentos desfocados e luminosos que imitam um filtro, mantendo a pele com aparência de pele.",
+      evitarSe: ["Peles muito secas, pode acentuar zonas ressequidas"],
+      rendimento: "Compacto de 8 g, ~4-5 meses com uso pontual.",
+      tendencia2026: "'Soft-Focus Perfection', acabamentos desfocados e luminosos que imitam um filtro, mantendo a pele com aparência de pele.",
       videoId: null
     },
     mk5: {
       nome: "Mini Rímel Acessório (formato chaveiro)",
       preco: 12, rating: 4.5, reviews: 97, badge: "Novo", icone: "wand",
-      descricao: "Rímel em formato miniatura, pensado para andar pendurado na mala — parte da tendência de maquilhagem como acessório colecionável.",
+      descricao: "Rímel em formato miniatura, pensado para andar pendurado na mala, parte da tendência de maquilhagem como acessório colecionável.",
       modoUso: ["Aplicar da raiz às pontas em zigue-zague.", "Deixar secar entre camadas.", "Remover só com desmaquilhante bifásico."],
       ingredientes: ["Ceras filmógenas", "Fibras alongadoras"],
       beneficios: ["Tamanho de bolso, sempre à mão", "Fácil de oferecer ou colecionar"],
-      evitarSe: ["Olhos muito sensíveis a fibras — preferir fórmula sem fibra"],
+      evitarSe: ["Olhos muito sensíveis a fibras, preferir fórmula sem fibra"],
       rendimento: "Tubo mini de 4 ml, ~2 meses de uso regular.",
-      tendencia2026: "'Makeup as Accessories' — produtos miniatura, tipo berloque, para colecionar e mostrar, não só para usar.",
+      tendencia2026: "'Makeup as Accessories', produtos miniatura, tipo berloque, para colecionar e mostrar, não só para usar.",
       videoId: null
     }
   };
@@ -692,61 +689,61 @@
   function renderMaquilhagem() {
     var html =
       '<div class="card">' +
-      '<h2>Maquilhagem — kit inicial K-beauty 2026 💄</h2>' +
-      '<p class="sub">Curadoria com base nas tendências de maquilhagem coreana para 2026 (care-fused, sweet treat, soft-focus, acessórios colecionáveis). Ainda não tem um questionário de diagnóstico próprio como o de cabelo — é um ponto de partida; o carrinho é o mesmo da tua conta.</p>' +
+      '<h2>Maquilhagem, kit inicial K-beauty 2026 💄</h2>' +
+      '<p class="sub">Curadoria com base nas tendências de maquilhagem coreana para 2026 (care-fused, sweet treat, soft-focus, acessórios colecionáveis). Ainda não tem um questionário de diagnóstico próprio como o de cabelo, é um ponto de partida; o carrinho é o mesmo da tua conta.</p>' +
       '<div id="maquilhagemGrid"></div>' +
       '<div class="banner ok" id="carrinhoTotalBoxMaquilhagem" style="margin-top:16px;"></div>' +
       '</div>';
     document.getElementById("painelMaquilhagem").innerHTML = html;
-    renderGrelhaProdutosGenerica(MAQUILHAGEM_CATALOGO, "maquilhagemGrid", "mk", "Como aplicar cushion foundation (técnica geral — não é conteúdo da HANA LAB)");
+    renderGrelhaProdutosGenerica(MAQUILHAGEM_CATALOGO, "maquilhagemGrid", "mk", "Como aplicar cushion foundation (técnica geral, não é conteúdo da HANA LAB)");
     atualizarTotalCarrinho();
   }
 
   // ============================================================
-  // 3.4 Skincare — Top 5 K-beauty 2026, com base em pesquisa real
+  // 3.4 Skincare, Top 5 K-beauty 2026, com base em pesquisa real
   // ============================================================
   var SKINCARE_CATALOGO = {
     sk1: {
       nome: "Óleo de Limpeza Dupla (1º passo)",
       preco: 24, rating: 4.8, reviews: 342, badge: "Mais vendido", icone: "tube",
-      descricao: "Óleo de limpeza para dissolver protetor solar, sebo e maquilhagem — primeiro passo da dupla limpeza, a base de qualquer rotina coreana.",
+      descricao: "Óleo de limpeza para dissolver protetor solar, sebo e maquilhagem, primeiro passo da dupla limpeza, a base de qualquer rotina coreana.",
       modoUso: ["Aplicar em pele SECA, massajando em movimentos circulares.", "Emulsionar com um pouco de água antes de enxaguar.", "Seguir sempre com um de limpeza à base de água (2º passo)."],
       ingredientes: ["Óleo de camélia", "Ésteres vegetais", "Extrato de chá verde"],
       beneficios: ["Remove protetor solar e oleosidade sem esfregar", "Não deixa a pele apertada"],
-      evitarSe: ["Pele com dermatite ativa — confirmar com dermatologista primeiro"],
+      evitarSe: ["Pele com dermatite ativa, confirmar com dermatologista primeiro"],
       rendimento: "Frasco de 150 ml, ~2 ml por uso, uso diário → cerca de 2,5 meses.",
-      tendencia2026: "A dupla limpeza continua a base de tudo em 2026 — o que mudou são as texturas, agora mais leves e com menos resíduo.",
+      tendencia2026: "A dupla limpeza continua a base de tudo em 2026, o que mudou são as texturas, agora mais leves e com menos resíduo.",
       videoId: "INBpAoJyPI0"
     },
     sk2: {
       nome: "Gel de Limpeza pH Baixo (2º passo)",
       preco: 18, rating: 4.7, reviews: 265, badge: null, icone: "tube",
-      descricao: "Gel de limpeza de pH baixo (perto do pH natural da pele) — remove o que sobrou do óleo sem desequilibrar a barreira cutânea.",
-      modoUso: ["Aplicar depois do óleo de limpeza, com pele húmida.", "Massajar suavemente 30–60 segundos.", "Enxaguar com água morna, não quente."],
+      descricao: "Gel de limpeza de pH baixo (perto do pH natural da pele), remove o que sobrou do óleo sem desequilibrar a barreira cutânea.",
+      modoUso: ["Aplicar depois do óleo de limpeza, com pele húmida.", "Massajar suavemente 30-60 segundos.", "Enxaguar com água morna, não quente."],
       ingredientes: ["Tensioativos suaves (aminoácidos)", "Centella asiática", "Alantoína"],
       beneficios: ["Limpa sem esticar a pele", "Mantém a barreira cutânea intacta"],
       evitarSe: [],
       rendimento: "Frasco de 150 ml, ~3 ml por uso, uso diário → cerca de 2 meses.",
-      tendencia2026: "pH baixo deixou de ser nicho — é o novo padrão esperado em limpeza coreana para 2026.",
+      tendencia2026: "pH baixo deixou de ser nicho, é o novo padrão esperado em limpeza coreana para 2026.",
       videoId: null
     },
     sk3: {
       nome: "Essência Fermentada",
       preco: 29, rating: 4.9, reviews: 198, badge: "Novo", icone: "dropper",
-      descricao: "Essência à base de ingredientes fermentados — a etapa que prepara a pele para absorver melhor tudo o que vem a seguir.",
+      descricao: "Essência à base de ingredientes fermentados, a etapa que prepara a pele para absorver melhor tudo o que vem a seguir.",
       modoUso: ["Aplicar em pele limpa, com as mãos (técnica de 'tapotage').", "Deixar absorver 30 segundos antes do próximo passo.", "Pode usar de manhã e à noite."],
       ingredientes: ["Filtrado de fermento de arroz", "Niacinamida", "Complexo de aminoácidos"],
       beneficios: ["Prepara a pele para melhor absorção", "Dá luminosidade imediata"],
       evitarSe: [],
       rendimento: "Frasco de 150 ml, ~5 ml por uso, 2x/dia → cerca de 6 semanas.",
-      tendencia2026: "'Bio-Fermented Brews' — fermentação (chá kombucha, ginseng envelhecido) para nutrientes mais concentrados e biodisponíveis.",
+      tendencia2026: "'Bio-Fermented Brews', fermentação (chá kombucha, ginseng envelhecido) para nutrientes mais concentrados e biodisponíveis.",
       videoId: null
     },
     sk4: {
       nome: "Ampola Cica Reparadora",
       preco: 33, rating: 4.8, reviews: 176, badge: null, icone: "ampoule",
-      descricao: "Ampola concentrada com centella asiática — acalma vermelhidão e reforça a barreira cutânea, o equivalente em pele às ampolas 'bond-repairing' do cabelo.",
-      modoUso: ["Aplicar em pele limpa antes do hidratante.", "Usar em toda a face ou só nas zonas mais sensíveis.", "1–2x por dia, conforme necessidade."],
+      descricao: "Ampola concentrada com centella asiática, acalma vermelhidão e reforça a barreira cutânea, o equivalente em pele às ampolas 'bond-repairing' do cabelo.",
+      modoUso: ["Aplicar em pele limpa antes do hidratante.", "Usar em toda a face ou só nas zonas mais sensíveis.", "1-2x por dia, conforme necessidade."],
       ingredientes: ["Centella asiática (cica)", "Pantenol", "Ceramidas"],
       beneficios: ["Acalma vermelhidão e irritação", "Reforça a barreira cutânea"],
       evitarSe: [],
@@ -758,12 +755,12 @@
       nome: "Máscara de Lençol + Sleeping Mask",
       preco: 21, rating: 4.9, reviews: 401, badge: "Mais vendido", icone: "sachet",
       descricao: "Dupla de máscaras: lençol para um boost rápido antes de um evento, sleeping mask para hidratação profunda durante a noite.",
-      modoUso: ["Máscara de lençol: 15–20 min, depois massajar o excesso — não enxaguar.", "Sleeping mask: aplicar como último passo da noite, dormir com ela.", "Não usar as duas na mesma rotina — escolher conforme o momento."],
+      modoUso: ["Máscara de lençol: 15-20 min, depois massajar o excesso, não enxaguar.", "Sleeping mask: aplicar como último passo da noite, dormir com ela.", "Não usar as duas na mesma rotina, escolher conforme o momento."],
       ingredientes: ["Ácido hialurónico multi-peso", "Extrato de centola", "Manteiga de karité"],
       beneficios: ["Hidratação imediata (lençol)", "Recuperação profunda durante o sono (sleeping mask)"],
       evitarSe: [],
       rendimento: "Caixa com 5 lençóis + boião de 80 ml de sleeping mask, ~2 meses combinados.",
-      tendencia2026: "Sheet masks continuam o item mais 'viral' do K-beauty — o que mudou é o pareamento com sleeping masks para rotina noturna completa.",
+      tendencia2026: "Sheet masks continuam o item mais 'viral' do K-beauty, o que mudou é o pareamento com sleeping masks para rotina noturna completa.",
       videoId: "zFvdnvvK4jc"
     }
   };
@@ -771,14 +768,14 @@
   function renderSkincare() {
     var html =
       '<div class="card">' +
-      '<h2>Skincare — Top 5 K-beauty 2026 ✨</h2>' +
-      '<p class="sub">Os 5 essenciais da skincare coreana para 2026, com base em pesquisa real de tendências: dupla limpeza, fermentação, cica e sheet masks. Ainda não tem questionário de diagnóstico próprio como o de cabelo — o carrinho é o mesmo da tua conta.</p>' +
-      renderVideoTutorial("OtgKS6loMTE", "Rotina completa de skincare coreana em 10 passos (visão geral — técnica geral, não é conteúdo da HANA LAB)") +
+      '<h2>Skincare, Top 5 K-beauty 2026 ✨</h2>' +
+      '<p class="sub">Os 5 essenciais da skincare coreana para 2026, com base em pesquisa real de tendências: dupla limpeza, fermentação, cica e sheet masks. Ainda não tem questionário de diagnóstico próprio como o de cabelo, o carrinho é o mesmo da tua conta.</p>' +
+      renderVideoTutorial("OtgKS6loMTE", "Rotina completa de skincare coreana em 10 passos (visão geral, técnica geral, não é conteúdo da HANA LAB)") +
       '<div id="skincareGrid" style="margin-top:16px;"></div>' +
       '<div class="banner ok" id="carrinhoTotalBoxSkincare" style="margin-top:16px;"></div>' +
       '</div>';
     document.getElementById("painelSkincare").innerHTML = html;
-    renderGrelhaProdutosGenerica(SKINCARE_CATALOGO, "skincareGrid", "sk", "Como usar uma máscara de lençol corretamente (técnica geral — não é conteúdo da HANA LAB)");
+    renderGrelhaProdutosGenerica(SKINCARE_CATALOGO, "skincareGrid", "sk", "Como usar uma máscara de lençol corretamente (técnica geral, não é conteúdo da HANA LAB)");
     atualizarTotalCarrinho();
   }
 
@@ -816,7 +813,7 @@
   //
   // Persistência: guardado no localStorage do navegador, para o carrinho
   // sobreviver a recarregar a página, trocar de separador (Nova avaliação /
-  // Minha ficha / Agenda) ou fechar e reabrir o browser — só é limpo se a
+  // Minha ficha / Agenda) ou fechar e reabrir o browser, só é limpo se a
   // cliente sair (logout) ou limpar os dados do navegador.
   var CARRINHO_STORAGE_KEY = "j8_carrinho_v1";
 
@@ -828,7 +825,7 @@
       return {
         fases: (dados && dados.fases) || {},
         servicos: (dados && dados.servicos) || {},
-        // "itens" guarda a maquilhagem/skincare escolhidas — carrinho único
+        // "itens" guarda a maquilhagem/skincare escolhidas, carrinho único
         // partilhado por todas as categorias da mesma conta.
         itens: (dados && dados.itens) || {}
       };
@@ -900,7 +897,7 @@
       '<div class="bundle-module">' +
       '<h3 class="bundle-title">🛒 Frequentemente escolhidas juntas para esta queixa</h3>' +
       '<div class="bundle-items">' +
-      top3.map(function (k) { return '<span class="bundle-chip">' + CATALOGO[k].nome.replace(/^Fase \d — /, "") + '</span>'; }).join('<span class="bundle-plus">+</span>') +
+      top3.map(function (k) { return '<span class="bundle-chip">' + CATALOGO[k].nome.replace(/^Fase \d, /, "") + '</span>'; }).join('<span class="bundle-plus">+</span>') +
       '</div>' +
       '<div class="bundle-footer"><span>Total do combo: <strong>' + fmt(precoCombo) + '</strong></span>' +
       '<button type="button" class="cta secondary" id="addBundleBtn" style="width:auto;padding:8px 16px;font-size:13px;">Adicionar as 3 ao carrinho</button></div>' +
@@ -1008,7 +1005,7 @@
     var totalEUR = totalCarrinho();
     var resumoHtml =
       "<strong>Total do carrinho (mesma conta, todas as categorias): " + fmt(totalEUR) +
-      "</strong> — sem limite de orçamento aplicado. Ajuste livremente o que faz sentido oferecer.";
+      "</strong>, sem limite de orçamento aplicado. Ajuste livremente o que faz sentido oferecer.";
     ["carrinhoTotalBox", "carrinhoTotalBoxMaquilhagem", "carrinhoTotalBoxSkincare"].forEach(function (id) {
       var box = document.getElementById(id);
       if (box) box.innerHTML = resumoHtml;
@@ -1027,16 +1024,16 @@
         Object.keys(carrinho.fases).forEach(function (k) {
           var f = carrinho.fases[k];
           if (f.incluido) {
-            linhas.push("• " + CATALOGO[k].nome + " (" + (f.tier === "clinical" ? "Clinical" : "Essential") + ") — " + fmt(CATALOGO[k][f.tier]));
+            linhas.push("• " + CATALOGO[k].nome + " (" + (f.tier === "clinical" ? "Clinical" : "Essential") + "), " + fmt(CATALOGO[k][f.tier]));
           }
         });
         Object.keys(carrinho.servicos).forEach(function (k) {
-          if (carrinho.servicos[k]) linhas.push("• " + SERVICOS[k].nome + " — " + fmt(SERVICOS[k].preco));
+          if (carrinho.servicos[k]) linhas.push("• " + SERVICOS[k].nome + ", " + fmt(SERVICOS[k].preco));
         });
         Object.keys(carrinho.itens || {}).forEach(function (k) {
           if (carrinho.itens[k]) {
             var p = catalogoDoItem(k);
-            if (p) linhas.push("• " + p.nome + " — " + fmt(p.preco));
+            if (p) linhas.push("• " + p.nome + ", " + fmt(p.preco));
           }
         });
         var parFmtCarrinho = fmtParDesconto(totalEUR, desc.totalComDescontoEUR);
@@ -1050,7 +1047,7 @@
   }
 
   // ============================================================
-  // 5.5 Gamificação — pontos, barra de progresso e conquistas
+  // 5.5 Gamificação, pontos, barra de progresso e conquistas
   // ============================================================
   // Puramente cosmético/motivacional (não altera preços nem promete
   // descontos além do desconto de boas-vindas do WhatsApp já existente).
@@ -1113,12 +1110,12 @@
           '):</strong> harmoniza bem com o subtom informado. Sem necessidade de ajuste técnico.</div>';
       } else {
         htmlCor = '<div class="banner harmonia-nao"><strong>Cor em avaliação (' + nomeCor +
-          '):</strong> com subtom ' + subtom + ', tende a competir com o tom de pele — não é contraindicação absoluta, ' +
+          '):</strong> com subtom ' + subtom + ', tende a competir com o tom de pele, não é contraindicação absoluta, ' +
           'é a decisão final da cliente, mas a alternativa que costuma harmonizar mais é: ' +
           ALTERNATIVA_POR_SUBTOM[subtom] + '.</div>';
       }
     } else {
-      htmlCor = '<div class="banner harmonia-ajuste">Nenhuma direção de coloração definida — com base no subtom (' +
+      htmlCor = '<div class="banner harmonia-ajuste">Nenhuma direção de coloração definida, com base no subtom (' +
         subtom + '), as opções que tendem a harmonizar mais são: ' + ALTERNATIVA_POR_SUBTOM[subtom] + '.</div>';
     }
     document.getElementById("harmoniaCor").innerHTML = htmlCor;
@@ -1257,7 +1254,7 @@
 
     var boosterExtra = null;
     if (restante >= CATALOGO.fase5.essential) {
-      boosterExtra = { nome: "Reserva — 2ª aplicação de Fase 5 (manutenção programada)", preco: CATALOGO.fase5.essential };
+      boosterExtra = { nome: "Reserva, 2ª aplicação de Fase 5 (manutenção programada)", preco: CATALOGO.fase5.essential };
       restante -= boosterExtra.preco;
     }
 
@@ -1283,19 +1280,19 @@
       : '<div class="banner harmonia-ajuste">Limite praticamente todo direcionado ao que resolve a queixa principal.</div>';
 
     var linhas = [];
-    linhas.push("ORÇAMENTO J8 — baseado na avaliação e no limite de " + fmt(budget));
+    linhas.push("ORÇAMENTO J8, baseado na avaliação e no limite de " + fmt(budget));
     linhas.push("");
     linhas.push("✅ Essencial para a queixa (" + rotuloObjetivo(objetivo) + "): " + fmt(somaAtual()));
     itensFinais.filter(function (i) { return i.obrigatoria; }).forEach(function (i) {
       linhas.push("   → " + i.nome + (i.tier === "clinical" ? " (linha Clinical)" : ""));
     });
     servicos.forEach(function (s) { linhas.push("   → " + s.nome); });
-    if (upgradeFeito) { linhas.push(""); linhas.push("⬆️ Sobrou orçamento — a fase mais relevante subiu para a linha Clinical."); }
+    if (upgradeFeito) { linhas.push(""); linhas.push("⬆️ Sobrou orçamento, a fase mais relevante subiu para a linha Clinical."); }
     if (faseExtraAdicionada) { linhas.push(""); linhas.push("➕ Também coube: " + faseExtra.nome); }
     if (boosterExtra) { linhas.push(""); linhas.push("➕ Já cabe (recomendado, não obrigatório): " + boosterExtra.nome); }
     linhas.push("");
     linhas.push(restante > 1
-      ? "💬 Sobrou " + fmt(restante) + " do limite — disponível para o próximo ciclo."
+      ? "💬 Sobrou " + fmt(restante) + " do limite, disponível para o próximo ciclo."
       : "💬 Limite praticamente todo direcionado à queixa principal.");
 
     var descOrc = aplicarDesconto(totalGasto);
@@ -1322,7 +1319,7 @@
   });
 
   // ============================================================
-  // 10. Ficha — histórico
+  // 10. Ficha, histórico
   // ============================================================
   function renderFichaLista(fichas) {
     var box = document.getElementById("fichaLista");
@@ -1357,7 +1354,7 @@
   }
 
   // ============================================================
-  // 11. Agenda — profissionais parceiros e marcação de horário
+  // 11. Agenda, profissionais parceiros e marcação de horário
   // ============================================================
   var profissionalSelecionado = null;
 
@@ -1419,7 +1416,7 @@
           msg.innerHTML = '<div class="banner erro">' + (res.d.error || "Erro ao marcar.") + '</div>';
           return;
         }
-        msg.innerHTML = '<div class="banner ok">Marcação confirmada — ' + new Date(horarioISO).toLocaleString("pt-PT") + '.</div>';
+        msg.innerHTML = '<div class="banner ok">Marcação confirmada, ' + new Date(horarioISO).toLocaleString("pt-PT") + '.</div>';
         carregarSlots(profissionalId);
         carregarMinhasMarcacoes();
       });
@@ -1467,7 +1464,7 @@
 
     var msg = document.getElementById("pedidoMsg");
     if (!itens.length) {
-      msg.innerHTML = '<div class="banner erro">Nenhum item de produto selecionado — faça uma avaliação primeiro (aba "Nova avaliação") e marque as fases desejadas.</div>';
+      msg.innerHTML = '<div class="banner erro">Nenhum item de produto selecionado, faça uma avaliação primeiro (aba "Nova avaliação") e marque as fases desejadas.</div>';
       return;
     }
 
@@ -1483,7 +1480,7 @@
           msg.innerHTML = '<div class="banner erro">' + (res.d.error || "Erro ao criar pedido.") + '</div>';
           return;
         }
-        msg.innerHTML = '<div class="banner ok">Pedido registado como pendente — total ' + fmt(res.d.pedido.totalEUR) + '.</div>';
+        msg.innerHTML = '<div class="banner ok">Pedido registado como pendente, total ' + fmt(res.d.pedido.totalEUR) + '.</div>';
         carregarPedidos();
       });
   });

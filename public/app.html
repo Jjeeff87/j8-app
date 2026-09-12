@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>J8 — Avaliação Capilar</title>
+<title>J8, Avaliação Capilar</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -15,7 +15,7 @@
       <div class="brand-mark">J8</div>
       <div>
         <h1>Avaliação Capilar &amp; Protocolo
-          <span>Protótipo de teste — não é o produto final</span>
+          <span>Protótipo de teste, não é o produto final</span>
         </h1>
       </div>
     </div>
@@ -32,13 +32,13 @@
   <div class="disclaimer">
     <strong>Protótipo funcional para teste da lógica clínico-comercial.</strong>
     A avaliação de harmonia segue critérios de visagismo e colorimetria pessoal; não substitui
-    consulta com profissional habilitado. Nenhuma imagem é processada — apenas as respostas
+    consulta com profissional habilitado. Nenhuma imagem é processada, apenas as respostas
     fornecidas abaixo (conforme <code>J8_MASTER_PLAN.md</code>: MVP primeiro, sem visão computacional).
   </div>
 
   <div id="painelCategoria" class="card category-select" style="display:none;">
     <h2>Escolhe o teu universo J8 ✨</h2>
-    <p class="sub">Todas as opções usam a mesma conta e o mesmo carrinho — podes trocar quando quiseres, sem perder nada.</p>
+    <p class="sub">Todas as opções usam a mesma conta e o mesmo carrinho, podes trocar quando quiseres, sem perder nada.</p>
     <div class="category-grid" id="categoriaGrid"></div>
   </div>
 
@@ -88,12 +88,12 @@
         <div class="field">
           <label>Geometria facial predominante</label>
           <select id="formatoRosto">
-            <option value="oval">Oval — proporção equilibrada entre testa, zigomático e mandíbula</option>
-            <option value="redondo">Redondo — largura e altura semelhantes</option>
-            <option value="quadrado">Quadrado — zigomático e mandíbula alinhados, ângulos marcados</option>
-            <option value="triangular">Triangular — mandíbula mais larga que a testa</option>
-            <option value="coracao">Coração — testa larga, queixo afilado</option>
-            <option value="retangular">Retangular — alongado, ângulos definidos</option>
+            <option value="oval">Oval, proporção equilibrada entre testa, zigomático e mandíbula</option>
+            <option value="redondo">Redondo, largura e altura semelhantes</option>
+            <option value="quadrado">Quadrado, zigomático e mandíbula alinhados, ângulos marcados</option>
+            <option value="triangular">Triangular, mandíbula mais larga que a testa</option>
+            <option value="coracao">Coração, testa larga, queixo afilado</option>
+            <option value="retangular">Retangular, alongado, ângulos definidos</option>
           </select>
         </div>
 
@@ -109,7 +109,7 @@
         <div class="field" id="corDesejadaField">
           <label>Direção de coloração em avaliação (opcional)</label>
           <select id="corDesejada">
-            <option value="">— nenhuma direção definida —</option>
+            <option value="">- nenhuma direção definida -</option>
             <option value="loiro_esverdeado">Loiro esverdeado (lemon platinum)</option>
             <option value="cream_soda">Cream soda</option>
             <option value="luzes_cidra">Luzes de cidra (bronze/caramelo)</option>
@@ -127,25 +127,25 @@
     <div id="resultado" style="display:none;">
 
       <div class="card">
-        <h2>Avaliação de harmonia — visagismo &amp; colorimetria</h2>
-        <p class="sub">Critério técnico, não opinião estética isolada — sempre com alternativa, nunca só veredito.</p>
+        <h2>Avaliação de harmonia, visagismo &amp; colorimetria</h2>
+        <p class="sub">Critério técnico, não opinião estética isolada, sempre com alternativa, nunca só veredito.</p>
         <div id="harmoniaCorte"></div>
         <div id="harmoniaCor"></div>
       </div>
 
       <div class="card">
-        <h2>Protocolo — todas as possibilidades disponíveis</h2>
+        <h2>Protocolo, todas as possibilidades disponíveis</h2>
         <p class="sub">Nada aqui é pré-filtrado por orçamento. Marque o que deseja incluir; o total é calculado em tempo real. As fases mais relevantes para a sua queixa principal já vêm pré-selecionadas.</p>
         <div id="menuProtocolo"></div>
         <div class="banner ok" id="carrinhoTotalBox" style="margin-top:16px;"></div>
-        <a href="#" target="_blank" rel="noopener" class="cta whatsapp-cta" id="enviarCarrinhoWhatsappBtn" style="display:none;">📲 Enviar este pedido por WhatsApp (−10% de boas-vindas)</a>
+        <a href="#" target="_blank" rel="noopener" class="cta whatsapp-cta" id="enviarCarrinhoWhatsappBtn" style="display:none;">📲 Enviar este pedido por WhatsApp (-10% de boas-vindas)</a>
         <button type="button" class="cta secondary" id="salvarFichaBtn">Guardar esta avaliação na minha ficha</button>
         <div id="salvarFichaMsg"></div>
       </div>
 
       <div class="card">
-        <h2>Orçamento fechado dentro de um limite <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(opcional — só se a cliente pedir)</span></h2>
-        <p class="sub">Isto não substitui a lista acima — é uma segunda etapa, só quando a cliente quer saber "o que dá para fazer com X".</p>
+        <h2>Orçamento fechado dentro de um limite <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(opcional, só se a cliente pedir)</span></h2>
+        <p class="sub">Isto não substitui a lista acima, é uma segunda etapa, só quando a cliente quer saber "o que dá para fazer com X".</p>
         <button type="button" class="cta secondary" id="ativarOrcamentoBtn">Montar orçamento com limite de gasto</button>
 
         <div id="blocoOrcamento" style="display:none;margin-top:16px;">
@@ -176,7 +176,7 @@
 
   <div id="painelFicha" style="display:none;">
     <div class="card">
-      <h2>Minha ficha — histórico de avaliações</h2>
+      <h2>Minha ficha, histórico de avaliações</h2>
       <p class="sub">Avaliações salvas nesta conta (armazenadas localmente no servidor de teste).</p>
       <div id="fichaLista"></div>
     </div>
@@ -185,7 +185,7 @@
   <div id="painelAgenda" style="display:none;">
     <div class="card">
       <h2>Marcação com profissional parceiro</h2>
-      <p class="sub">Agenda de exemplo — dados fictícios só para testar o fluxo de marcação.</p>
+      <p class="sub">Agenda de exemplo, dados fictícios só para testar o fluxo de marcação.</p>
       <div id="listaProfissionais"></div>
       <div id="slotsBox" style="display:none;">
         <h3 style="font-size:14px;margin-top:18px;">Horários disponíveis (próximos dias úteis)</h3>
@@ -209,7 +209,7 @@
 
     <div class="card">
       <h2>Pedidos de produtos (revenda)</h2>
-      <p class="sub">Protótipo sem gateway de pagamento — regista o pedido como "pendente" para simular o fluxo.</p>
+      <p class="sub">Protótipo sem gateway de pagamento, regista o pedido como "pendente" para simular o fluxo.</p>
       <button type="button" class="cta secondary" id="finalizarPedidoBtn">Finalizar pedido com os itens de produto selecionados na última avaliação</button>
       <div id="pedidoMsg"></div>
       <h3 style="font-size:14px;margin-top:18px;">Histórico de pedidos</h3>
